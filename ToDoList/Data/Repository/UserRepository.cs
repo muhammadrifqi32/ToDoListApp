@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
@@ -74,6 +75,19 @@ namespace Data.Repository
                 return users;
             }
             //throw new NotImplementedException();
+        }
+
+        public User Get(UserVM userVM)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value))
+            {
+                var procName = "SP_Login"; //callsp
+                parameters.Add("@Username", userVM.Username); //retrieve username
+                parameters.Add("@Password", userVM.Password); //retrieve password
+
+                var users = connection.Query<User>(procName, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault(); //await ada jeda. bermanfaat untuk banyak data
+                return users;
+            }
         }
 
         public int Update(int Id, UserVM userVM)

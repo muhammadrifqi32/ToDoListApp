@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,6 +35,18 @@ namespace API.Controllers
             return _userService.Get(id);
         }
 
+        [HttpPost]
+        [Route("Login")]
+        public IActionResult Get(UserVM userVM)
+        {
+            var get = _userService.Get(userVM);
+            if (get != null)
+            {
+                return Ok(get);
+            }
+            return BadRequest("Login Failed!");
+        }
+
         // POST: api/Users
         [HttpPost]
         public IActionResult Post(UserVM userVM)
@@ -42,7 +54,7 @@ namespace API.Controllers
             var push = _userService.Create(userVM);
             if (push > 0)
             {
-                return Ok("Successfully Added!");
+                return Ok(push);
             }
             return BadRequest("Added Row Failed!");
         }
@@ -54,7 +66,7 @@ namespace API.Controllers
             var put = _userService.Update(id, userVM);
             if (put > 0)
             {
-                return Ok("Update Sucessed!");
+                return Ok(put);
             }
             return BadRequest("Update Failed!");
         }
@@ -66,7 +78,7 @@ namespace API.Controllers
             var delete = _userService.Delete(id);
             if (delete > 0)
             {
-                return Ok("Delete Successed!");
+                return Ok(delete);
             }
             return BadRequest("Delete Failed!");
         }

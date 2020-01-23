@@ -42,6 +42,11 @@ namespace API.Service
             return _userRepository.Get(Id);
             //throw new NotImplementedException();
         }
+        public User Get(UserVM userVM)
+        {
+            return _userRepository.Get(userVM);
+            //throw new NotImplementedException();
+        }
 
         public int Update(int Id, UserVM userVM)
         {
