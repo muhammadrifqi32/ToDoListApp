@@ -107,5 +107,29 @@ namespace ToDoList.Controllers
                 return Json(result);
             }
         }
+        public async Task<JsonResult> GetById(int id)
+        {
+            HttpResponseMessage response = await client.GetAsync("todolists");
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadAsAsync<IList<Data.Model.ToDoList>>();
+                var item = data.FirstOrDefault(t => t.Id == id);
+                var json = JsonConvert.SerializeObject(item, Formatting.None, new JsonSerializerSettings()
+                {
+                    ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                });
+                return Json(json);
+            }
+            return Json("internal server error");
+        }
+        public JsonResult Delete(int id)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:44377/api/")
+            };
+            var result = client.DeleteAsync("todolists/" + id).Result;
+            return Json(result);
+        }
     }
-}
+}   
