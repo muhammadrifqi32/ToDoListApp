@@ -45,7 +45,7 @@ namespace ToDoList.Controllers
                     var data = result.Content.ReadAsAsync<User>();
                     data.Wait();
                     var user = data.Result;
-                    HttpContext.Session.SetString("id", user.Id.ToString());
+                    HttpContext.Session.SetInt32("id", user.Id);
                     //var Id = HttpContext.Session.GetString("Id");
                     return RedirectToAction(nameof(Index));
                 }
@@ -61,6 +61,51 @@ namespace ToDoList.Controllers
         {
             HttpContext.Session.Remove("id");
             return RedirectToAction(nameof(Index));
+        }
+
+        public JsonResult List()
+        {
+            IEnumerable<Data.Model.ToDoList> todolist = null;
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:44377/api/")
+            };
+            var responseTask = client.GetAsync("todolists");
+            responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<IList<Data.Model.ToDoList>>();
+                readTask.Wait();
+                todolist = readTask.Result;
+            }
+            else
+            {
+                todolist = Enumerable.Empty<Data.Model.ToDoList>();
+                ModelState.AddModelError(string.Empty, "server error, try after some time");
+            }
+            return Json(todolist);
+        }
+        public JsonResult InsertOrUpdate(ToDoListVM toDoListVM)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:44377/api/")
+            };
+            var myContent = JsonConvert.SerializeObject(toDoListVM);
+            var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
+            var byteContent = new ByteArrayContent(buffer);
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            if (toDoListVM.Id == 0)
+            {
+                var result = client.PostAsync("todolists", byteContent).Result;
+                return Json(result);
+            }
+            else
+            {
+                var result = client.PutAsync("todolists/" + toDoListVM.Id, byteContent).Result;
+                return Json(result);
+            }
         }
     }
 }
