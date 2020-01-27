@@ -15,8 +15,7 @@ function ClearScreen() {
     $('#Save').show();
 }
 function loadToDoList() {
-    var todostatus = null;
-    //debugger;
+    debugger;
     $.ajax({
         url: "/User/List",
         type: "GET",
@@ -27,15 +26,9 @@ function loadToDoList() {
             debugger; 
             var html = '';
             $.each(result, function (key, ToDoList) {
-                if (ToDoList.status == 0) {
-                    todostatus = "On Progress";
-                }
-                else{
-                    todostatus = "Done";
-                }
                 html += '<tr>';
                 html += '<td>' + ToDoList.name + '</td>';
-                html += '<td>' + todostatus + '</td>';
+                html += '<td>' + ToDoList.status + '</td>';
                 html += '<td><a href="#" class="fa fa-pencil" data-toggle="tooltip" title="Edit" id="Update" onclick="return GetbyId(' + ToDoList.id + ')"></a> |';
                 html += ' <a href="#" class="fa fa-trash" data-toggle="tooltip" title="Delete" id="Delete" onclick="return Delete(' + ToDoList.id + ')" ></button ></td > ';
                 html += '</tr>';

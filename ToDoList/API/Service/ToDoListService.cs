@@ -9,13 +9,13 @@ using Data.ViewModel;
 
 namespace API.Service
 {
-    public class ToDoListService : IToDoListService
+    public class ToDoListServiceold : IToDoListService
     {
         private IToDoListRepository _todolistRepository;
 
-        public ToDoListService() { }
+        public ToDoListServiceold() { }
 
-        public ToDoListService(IToDoListRepository todolistRepository)
+        public ToDoListServiceold(IToDoListRepository todolistRepository)
         {
             _todolistRepository = todolistRepository;
         }
@@ -31,13 +31,13 @@ namespace API.Service
             //throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<ToDoListVM>> Get()
+        public Task<IEnumerable<Data.Model.ToDoList>> Get()
         {
             return _todolistRepository.Get();
             //throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<ToDoListVM>> Get(int Id)
+        public Task<IEnumerable<Data.Model.ToDoList>> Get(int Id)
         {
             return _todolistRepository.Get(Id);
             //throw new NotImplementedException();

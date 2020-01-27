@@ -9,8 +9,8 @@ namespace API.Service.Interface
 {
     public interface IToDoListService
     {
-        Task<IEnumerable<ToDoListVM>> Get();
-        Task<IEnumerable<ToDoListVM>> Get(int Id);
+        Task<IEnumerable<Data.Model.ToDoList>> Get();
+        Task<IEnumerable<Data.Model.ToDoList>> Get(int Id);
         int Create(ToDoListVM toDoListVM);
         int Update(int Id, ToDoListVM toDoListVM);
         int Delete(int Id);
