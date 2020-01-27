@@ -26,7 +26,10 @@ namespace ToDoList
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddSession();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(10); //to set how long the session
+            });
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }

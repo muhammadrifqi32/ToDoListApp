@@ -20,7 +20,7 @@ namespace ToDoList.Controllers
             client.BaseAddress = new Uri("https://localhost:44377/api/");
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        }
+            }
         public IActionResult Index()
         {
             var Id = HttpContext.Session.GetString("id");
@@ -39,13 +39,18 @@ namespace ToDoList.Controllers
                 var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
                 var byteContent = new ByteArrayContent(buffer);
                 byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
                 var result = client.PostAsync("Users/Login", byteContent).Result;
                 if (result.IsSuccessStatusCode)
                 {
-                    var data = result.Content.ReadAsAsync<User>();
-                    data.Wait();
-                    var user = data.Result;
-                    HttpContext.Session.SetInt32("id", user.Id);
+                    //var data = result.Content.ReadAsAsync<User>();
+                    //data.Wait();
+                    //var user = data.Result;
+                    var data = result.Content.ReadAsStringAsync().Result.Replace("\"","").Split("...");
+                    var token = "Bearer " + data[0];
+                    var id = data[1];
+                    HttpContext.Session.SetString("id", id);
+                    HttpContext.Session.SetString("JWToken", token);
                     //var Id = HttpContext.Session.GetString("Id");
                     return RedirectToAction(nameof(Index));
                 }
@@ -70,7 +75,9 @@ namespace ToDoList.Controllers
             {
                 BaseAddress = new Uri("https://localhost:44377/api/")
             };
-            var responseTask = client.GetAsync("todolists");
+            client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
+            //var userid = convert.toint32(httpcontext.session.getstring("id"));
+            var responseTask = client.GetAsync("ToDoLists/" + HttpContext.Session.GetInt32("id"));
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
@@ -92,6 +99,8 @@ namespace ToDoList.Controllers
             {
                 BaseAddress = new Uri("https://localhost:44377/api/")
             };
+            client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
+            toDoListVM.UserId = Convert.ToInt32(HttpContext.Session.GetString("id"));
             var myContent = JsonConvert.SerializeObject(toDoListVM);
             var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
             var byteContent = new ByteArrayContent(buffer);
@@ -109,6 +118,7 @@ namespace ToDoList.Controllers
         }
         public async Task<JsonResult> GetById(int id)
         {
+            client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
             HttpResponseMessage response = await client.GetAsync("todolists");
             if (response.IsSuccessStatusCode)
             {
@@ -128,6 +138,7 @@ namespace ToDoList.Controllers
             {
                 BaseAddress = new Uri("https://localhost:44377/api/")
             };
+            client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
             var result = client.DeleteAsync("todolists/" + id).Result;
             return Json(result);
         }

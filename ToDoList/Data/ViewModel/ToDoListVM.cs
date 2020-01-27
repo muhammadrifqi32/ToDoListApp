@@ -8,7 +8,7 @@ namespace Data.ViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Status { get; set; }
-        public string User { get; set; }
+        public int Status { get; set; }
+        public int UserId { get; set; }
     }
 }
