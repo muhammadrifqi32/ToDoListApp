@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using API.Service.Interface;
 using Data.Model;
 using Data.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ToDoListsController : ControllerBase
@@ -20,8 +22,9 @@ namespace API.Controllers
         {
             _todolistService = todolistService;
         }
+
         [HttpGet]
-        public Task<IEnumerable<Data.Model.ToDoList>> Get()
+        public Task<IEnumerable<ToDoListVM>> Get()
         {
             return _todolistService.Get();
             //return new string[] { "value1", "value2" };
@@ -29,7 +32,7 @@ namespace API.Controllers
 
         // GET: api/ToDoLists/5
         [HttpGet("{Id}")]
-        public Task<IEnumerable<Data.Model.ToDoList>> Get(int id)
+        public Task<IEnumerable<ToDoListVM>> Get(int id)
         {
             return _todolistService.Get(id);
         }

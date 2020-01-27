@@ -1,12 +1,18 @@
 ﻿    using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using API.Service.Interface;
 using Data.Model;
 using Data.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace API.Controllers
 {
@@ -14,10 +20,12 @@ namespace API.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        public IConfiguration _configuration;
         private IUserService _userService;
 
-        public UsersController(IUserService userService)
+        public UsersController(IConfiguration config,IUserService userService)
         {
+            _configuration = config;
             _userService = userService;
         }
 
@@ -42,7 +50,23 @@ namespace API.Controllers
             var get = _userService.Get(userVM);
             if (get != null)
             {
-                return Ok(get);
+                var claims = new[] {
+                    new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+                    new Claim("Id", get.Id.ToString()),
+                    new Claim("Username", get.Username),
+                    new Claim("Password", get.Password)
+                   };
+
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+
+                var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                var token = new JwtSecurityToken(_configuration["Jwt:Issuer"], _configuration["Jwt:Audience"], claims, expires: DateTime.UtcNow.AddHours(1), signingCredentials: signIn);
+
+                return Ok(new JwtSecurityTokenHandler().WriteToken(token) + "..." + get.Id);
+                //return Ok(get);
             }
             return BadRequest("Login Failed!");
         }

@@ -30,7 +30,7 @@ namespace Data.Repository
                 var procName = "SP_InsertToDoList"; //callsp
                 parameters.Add("@Name", toDoListVM.Name); //retrieve username
                 parameters.Add("@Status", toDoListVM.Status); //retrieve password
-                //parameters.Add("@UserId", toDoListVM.User); //retrieve password
+                parameters.Add("@UserId", toDoListVM.UserId); //retrieve password
 
                 var todolist = connection.Execute(procName, parameters, commandType: CommandType.StoredProcedure); //toiinputdatausingdapper
                 return todolist;
@@ -51,26 +51,26 @@ namespace Data.Repository
             //throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<Model.ToDoList>> Get()
+        public async Task<IEnumerable<ToDoListVM>> Get()
         {
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value))
             {
                 var procName = "SP_GetAllToDoList"; //
 
-                var todolist = await connection.QueryAsync<Model.ToDoList>(procName, commandType: CommandType.StoredProcedure); //await ada jeda. bermanfaat untuk banyak data
+                var todolist = await connection.QueryAsync<ToDoListVM>(procName, commandType: CommandType.StoredProcedure); //await ada jeda. bermanfaat untuk banyak data
                 return todolist;
             }
             //throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<Model.ToDoList>> Get(int Id)
+        public async Task<IEnumerable<ToDoListVM>> Get(int Id)
         {
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value))
             {
                 var procName = "SP_GetToDoListByID"; //
                 parameters.Add("@ID", Id);
 
-                var todolist = await connection.QueryAsync<Model.ToDoList>(procName, parameters, commandType: CommandType.StoredProcedure); //await ada jeda. bermanfaat untuk banyak data
+                var todolist = await connection.QueryAsync<ToDoListVM>(procName, parameters, commandType: CommandType.StoredProcedure); //await ada jeda. bermanfaat untuk banyak data
                 return todolist;
             }
             //throw new NotImplementedException();
@@ -84,7 +84,7 @@ namespace Data.Repository
                 parameters.Add("@ID", Id);
                 parameters.Add("@Name", toDoListVM.Name);
                 parameters.Add("@Status", toDoListVM.Status);
-                parameters.Add("@UserId", toDoListVM.User);
+                parameters.Add("@UserId", toDoListVM.UserId);
 
                 var todolist = connection.Execute(procName, parameters, commandType: CommandType.StoredProcedure); //toiinputdatausingdapper
                 return todolist;
