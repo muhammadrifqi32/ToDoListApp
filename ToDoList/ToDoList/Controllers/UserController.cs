@@ -77,7 +77,7 @@ namespace ToDoList.Controllers
             };
             client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
             //var userid = convert.toint32(httpcontext.session.getstring("id"));
-            var responseTask = client.GetAsync("ToDoLists/" + HttpContext.Session.GetString("id"));
+            var responseTask = client.GetAsync("ToDoLists/" + HttpContext.Session.GetInt32("id"));
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
