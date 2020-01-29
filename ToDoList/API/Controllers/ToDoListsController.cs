@@ -31,10 +31,10 @@ namespace API.Controllers
         }
 
         // GET: api/ToDoLists/5
-        [HttpGet("{Id}")]
-        public Task<IEnumerable<ToDoListVM>> Get(int id)
+        [HttpGet("{Id}/{status}")]
+        public Task<IEnumerable<ToDoListVM>> Get(int id, int status)
         {
-            return _todolistService.Get(id);
+            return _todolistService.Get(id, status);
         }
 
         [HttpPost]

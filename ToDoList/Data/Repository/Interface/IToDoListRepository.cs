@@ -10,7 +10,7 @@ namespace Data.Repository.Interface
     public interface IToDoListRepository
     {
         Task<IEnumerable<ToDoListVM>> Get();
-        Task<IEnumerable<ToDoListVM>> Get(int Id);
+        Task<IEnumerable<ToDoListVM>> Get(int Id, int status);
         int Create(ToDoListVM toDoListVM);
         int Update(int Id, ToDoListVM toDoListVM);
         int Delete(int Id);

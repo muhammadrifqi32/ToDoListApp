@@ -63,12 +63,13 @@ namespace Data.Repository
             //throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<ToDoListVM>> Get(int Id)
+        public async Task<IEnumerable<ToDoListVM>> Get(int Id, int status)
         {
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value))
             {
                 var procName = "SP_GetToDoListByID"; //
                 parameters.Add("@ID", Id);
+                parameters.Add("@status", status);
 
                 var todolist = await connection.QueryAsync<ToDoListVM>(procName, parameters, commandType: CommandType.StoredProcedure); //await ada jeda. bermanfaat untuk banyak data
                 return todolist;

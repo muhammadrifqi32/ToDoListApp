@@ -1,5 +1,6 @@
-﻿$(document).ready(function () {
-    var table = $('#myTable').DataTable({
+﻿var table = null;
+$(document).ready(function () {
+    table = $('#myTable').DataTable({
         "columnDefs": [{
             "orderable": false,
             "targets": 2
@@ -8,6 +9,10 @@
         "responsive": true
     });
 });
+$('#filter').change(function () {
+    debugger;
+    table.ajax.url('/User/list/' + $('#filter').val()).load();
+})
 function ClearScreen() {
     $('#Id').val('');
     $('#name').val('');
@@ -18,19 +23,19 @@ function loadToDoList() {
     var todostatus = null;
     debugger;
     $.ajax({
-        url: "/User/List",
+        url: "/User/List/" + $('#filter').val(),
         type: "GET",
         contentType: "application/json;charset=utf-8",
         dataType: "json",
         async: false,
         success: function (result) {
-            debugger; 
+            debugger;
             var html = '';
             $.each(result, function (key, ToDoList) {
                 if (ToDoList.status == 0) {
                     todostatus = "On Progress";
                 }
-                else{
+                else {
                     todostatus = "Done";
                 }
                 html += '<tr>';

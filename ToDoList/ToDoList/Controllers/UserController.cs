@@ -87,21 +87,28 @@ namespace ToDoList.Controllers
             var byteContent = new ByteArrayContent(buffer);
             byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             var result = client.PostAsync("users", byteContent).Result;
-            MailMessage mm = new MailMessage("muhammadrifqi0@gmail.com", userVM.Email);
-            mm.Subject = "[Password] " + DateTime.Now.ToString("ddMMyyyyhhmmss");
-            mm.Body = "Hi " + userVM.Username + "\nThis Is Your New Password : " + userVM.Password;
+            if (result.IsSuccessStatusCode)
+            {
+                MailMessage mm = new MailMessage("muhammadrifqi0@gmail.com", userVM.Email);
+                mm.Subject = "[Password] " + DateTime.Now.ToString("ddMMyyyyhhmmss");
+                mm.Body = "Hi " + userVM.Username + "\nThis Is Your New Password : " + userVM.Password;
 
-            SmtpClient smtp = new SmtpClient();
-            smtp.Host = "smtp.gmail.com";
-            smtp.Port = 587;
-            smtp.EnableSsl = true;
+                SmtpClient smtp = new SmtpClient();
+                smtp.Host = "smtp.gmail.com";
+                smtp.Port = 587;
+                smtp.EnableSsl = true;
 
-            NetworkCredential nc = new NetworkCredential("muhammadrifqi0@gmail.com", "");
-            smtp.UseDefaultCredentials = false;
-            smtp.Credentials = nc;
-            smtp.Send(mm);
-            ViewBag.Message = "Password Has Been Sent.Check your email to login";
-            return Json(new { Success = true, Data = result });
+                NetworkCredential nc = new NetworkCredential("muhammadrifqi0@gmail.com", "085376886737");
+                smtp.UseDefaultCredentials = false;
+                smtp.Credentials = nc;
+                smtp.Send(mm);
+                ViewBag.Message = "Password Has Been Sent.Check your email to login";
+                return Json(new { Success = true, Data = result });
+            }
+            else
+            {
+                return Json(new { code = 1 });
+            }
         }
 
         public ActionResult Logout()
@@ -110,7 +117,8 @@ namespace ToDoList.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public JsonResult List()
+        [HttpGet("user/list/{status}")]
+        public JsonResult List(int status)
         {
             IEnumerable<Data.Model.ToDoList> todolist = null;
             var client = new HttpClient
@@ -119,7 +127,7 @@ namespace ToDoList.Controllers
             };
             client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
             //var userid = convert.toint32(httpcontext.session.getstring("id"));
-            var responseTask = client.GetAsync("ToDoLists/" + HttpContext.Session.GetString("id"));
+            var responseTask = client.GetAsync("ToDoLists/" + HttpContext.Session.GetString("id") +"/" + status);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
