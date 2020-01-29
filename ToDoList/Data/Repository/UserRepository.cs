@@ -11,15 +11,18 @@ using Data.Model;
 using Data.Repository.Interface;
 using Data.ViewModel;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace Data.Repository
 {
     public class UserRepository : IUserRepository
     {
+        public IConfiguration _configuration;
         public readonly ConnectionStrings _connectionStrings;
 
-        public UserRepository(ConnectionStrings connectionStrings)
+        public UserRepository(ConnectionStrings connectionStrings, IConfiguration configuration)
         {
+            _configuration = configuration;
             this._connectionStrings = connectionStrings; //samewith dependency injection?
         }
 
@@ -27,11 +30,12 @@ namespace Data.Repository
 
         public int Create(UserVM userVM)
         {
-            using(SqlConnection connection = new SqlConnection(_connectionStrings.Value))
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value))
             {
                 var procName = "SP_InsertUser"; //callsp
+                parameters.Add("@Email", userVM.Email); //retrieve username
                 parameters.Add("@Username", userVM.Username); //retrieve username
-                parameters.Add("@Password", userVM.Username); //retrieve password
+                parameters.Add("@Password", userVM.Password); //retrieve password
 
                 var users = connection.Execute(procName, parameters, commandType: CommandType.StoredProcedure); //toiinputdatausingdapper
                 return users;
@@ -77,16 +81,29 @@ namespace Data.Repository
             //throw new NotImplementedException();
         }
 
+        public static bool ValidatePassword(string password, string correctHash)
+        {
+            return BCrypt.Net.BCrypt.Verify(password, correctHash);
+        }
+
         public User Get(UserVM userVM)
         {
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value))
             {
-                var procName = "SP_Login"; //callsp
-                parameters.Add("@Username", userVM.Username); //retrieve username
-                parameters.Add("@Password", userVM.Password); //retrieve password
+                var checkuser = connection.Query<User>("exec SP_GetUsernameLogin @Username", new { Username = userVM.Username }).SingleOrDefault();
+                if (checkuser != null)
+                {
+                    if (ValidatePassword(userVM.Password, checkuser.Password))
+                    {
+                        var procName = "SP_Login"; //callsp
+                        parameters.Add("@Username", userVM.Username); //retrieve username
+                        parameters.Add("@Password", userVM.Password); //retrieve password
 
-                var users = connection.Query<User>(procName, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault(); //await ada jeda. bermanfaat untuk banyak data
-                return users;
+                        var users = connection.Query<User>(procName, parameters, commandType: CommandType.StoredProcedure).FirstOrDefault(); //await ada jeda. bermanfaat untuk banyak data
+                        return users;
+                    }
+                }
+                return checkuser;
             }
         }
 
@@ -96,6 +113,7 @@ namespace Data.Repository
             {
                 var procName = "SP_UpdateUser";
                 parameters.Add("@ID", Id);
+                parameters.Add("@Email", userVM.Email);
                 parameters.Add("@Username", userVM.Username);
                 parameters.Add("@Password", userVM.Username);
 

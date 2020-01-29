@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using Data.Model;
 using Data.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using ToDoList.Util;
 
 namespace ToDoList.Controllers
 {
@@ -20,7 +23,7 @@ namespace ToDoList.Controllers
             client.BaseAddress = new Uri("https://localhost:44377/api/");
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            }
+        }
         public IActionResult Index()
         {
             var Id = HttpContext.Session.GetString("id");
@@ -46,13 +49,15 @@ namespace ToDoList.Controllers
                     //var data = result.Content.ReadAsAsync<User>();
                     //data.Wait();
                     //var user = data.Result;
-                    var data = result.Content.ReadAsStringAsync().Result.Replace("\"","").Split("...");
+                    //if (Hashing.ValidatePassword(userVM.Password, userVM.Password)) { 
+                    var data = result.Content.ReadAsStringAsync().Result.Replace("\"", "").Split("...");
                     var token = "Bearer " + data[0];
                     var id = data[1];
                     HttpContext.Session.SetString("id", id);
                     HttpContext.Session.SetString("JWToken", token);
                     //var Id = HttpContext.Session.GetString("Id");
                     return RedirectToAction(nameof(Index));
+                    //}
                 }
                 return View();
             }
@@ -60,6 +65,43 @@ namespace ToDoList.Controllers
             {
                 return View();
             }
+        }
+
+        [HttpGet]
+        public ActionResult Register()
+        {
+            return View("Register");
+        }
+
+
+        [HttpPost]
+        public JsonResult Register(UserVM userVM)
+        {
+            userVM.Password = Hashing.HashPassword(userVM.Password);
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:44377/api/")
+            };
+            var myContent = JsonConvert.SerializeObject(userVM);
+            var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
+            var byteContent = new ByteArrayContent(buffer);
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var result = client.PostAsync("users", byteContent).Result;
+            MailMessage mm = new MailMessage("muhammadrifqi0@gmail.com", userVM.Email);
+            mm.Subject = "[Password] " + DateTime.Now.ToString("ddMMyyyyhhmmss");
+            mm.Body = "Hi " + userVM.Username + "\nThis Is Your New Password : " + userVM.Password;
+
+            SmtpClient smtp = new SmtpClient();
+            smtp.Host = "smtp.gmail.com";
+            smtp.Port = 587;
+            smtp.EnableSsl = true;
+
+            NetworkCredential nc = new NetworkCredential("muhammadrifqi0@gmail.com", "");
+            smtp.UseDefaultCredentials = false;
+            smtp.Credentials = nc;
+            smtp.Send(mm);
+            ViewBag.Message = "Password Has Been Sent.Check your email to login";
+            return Json(new { Success = true, Data = result });
         }
 
         public ActionResult Logout()
@@ -143,4 +185,4 @@ namespace ToDoList.Controllers
             return Json(result);
         }
     }
-}   
+}

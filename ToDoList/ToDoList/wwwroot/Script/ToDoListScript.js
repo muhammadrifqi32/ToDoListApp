@@ -16,7 +16,7 @@ function ClearScreen() {
 }
 function loadToDoList() {
     var todostatus = null;
-    //debugger;
+    debugger;
     $.ajax({
         url: "/User/List",
         type: "GET",
