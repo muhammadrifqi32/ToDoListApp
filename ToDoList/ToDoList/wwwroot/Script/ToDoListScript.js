@@ -1,14 +1,43 @@
 ﻿var table = null;
+
 $(document).ready(function () {
     table = $('#myTable').DataTable({
-        "columnDefs": [{
-            "orderable": false,
-            "targets": 2
-        }],
-        "ajax": loadToDoList(),
-        "responsive": true
+        //"processing": true, // for show progress bar  
+        //"serverSide": true, // for process server side  
+        //"filter": true, // this is for disable filter (search box)  
+        //"orderMulti": false, // for disable multiple column at once 
+        "ajax": {
+            url: "/User/List/" + $('#filter').val(),
+            type: "GET"
+        },
+        "columnDefs":
+            [{
+                "targets": [2],
+                "visible": false,
+                "searchable": false
+            }],
+        "columns": [
+            { "data": "name" },
+            {
+                "render": function (data, type, row) {
+                    if (row.status == 0) {
+                        return "On Progress";
+                    }
+                    else {
+                        return "Done";
+                    }
+                }
+            },
+
+            {
+                "render": function (data, type, row) {
+                    return '<button class="btn btn-warning hidden-sm-down btn-success" data-placement="left" data-toggle="tooltip" title="Edit" onclick="return GetById(' + row.id + ')"> <i class="mdi mdi-plus-circle"></i></button >' +
+                        '<button class="btn btn-warning hidden-sm-down btn-success" data-placement="left" data-toggle="tooltip" title="Edit" onclick="return Delete(' + row.id + ')"> <i class="mdi mdi-plus-circle"></i></button >'
+                }
+            }]
     });
 });
+
 $('#filter').change(function () {
     debugger;
     table.ajax.url('/User/list/' + $('#filter').val()).load();
@@ -19,41 +48,41 @@ function ClearScreen() {
     $('#Update').hide();
     $('#Save').show();
 }
-function loadToDoList() {
-    var todostatus = null;
-    debugger;
-    $.ajax({
-        url: "/User/List/" + $('#filter').val(),
-        type: "GET",
-        contentType: "application/json;charset=utf-8",
-        dataType: "json",
-        async: false,
-        success: function (result) {
-            debugger;
-            var html = '';
-            $.each(result, function (key, ToDoList) {
-                if (ToDoList.status == 0) {
-                    todostatus = "On Progress";
-                }
-                else {
-                    todostatus = "Done";
-                }
-                html += '<tr>';
-                html += '<td>' + ToDoList.name + '</td>';
-                html += '<td>' + todostatus + '</td>';
-                html += '<td><a href="#" class="fa fa-pencil" data-toggle="tooltip" title="Edit" id="Update" onclick="return GetbyId(' + ToDoList.id + ')"></a> |';
-                html += ' <a href="#" class="fa fa-trash" data-toggle="tooltip" title="Delete" id="Delete" onclick="return Delete(' + ToDoList.id + ')" ></button ></td > ';
-                html += '</tr>';
-                html += '</tr>';
-                html += '</tr>';
-            });
-            $('.todolistbody').html(html);
-        },
-        error: function (errormessage) {
-            alert(errormessage.responseText);
-        }
-    });
-}
+//function loadToDoList() {
+//    var todostatus = null;
+//    debugger;
+//    $.ajax({
+//        url: "/User/List/" + $('#filter').val(),
+//        type: "GET",
+//        contentType: "application/json;charset=utf-8",
+//        dataType: "json",
+//        async: false,
+//        success: function (result) {
+//            debugger;
+//            var html = '';
+//            $.each(result, function (key, ToDoList) {
+//                if (ToDoList.status == 0) {
+//                    todostatus = "On Progress";
+//                }
+//                else {
+//                    todostatus = "Done";
+//                }
+//                html += '<tr>';
+//                html += '<td>' + ToDoList.name + '</td>';
+//                html += '<td>' + todostatus + '</td>';
+//                html += '<td><a href="#" class="fa fa-pencil" data-toggle="tooltip" title="Edit" id="Update" onclick="return GetbyId(' + ToDoList.id + ')"></a> |';
+//                html += ' <a href="#" class="fa fa-trash" data-toggle="tooltip" title="Delete" id="Delete" onclick="return Delete(' + ToDoList.id + ')" ></button ></td > ';
+//                html += '</tr>';
+//                html += '</tr>';
+//                html += '</tr>';
+//            });
+//            $('.todolistbody').html(html);
+//        },
+//        error: function (errormessage) {
+//            alert(errormessage.responseText);
+//        }
+//    });
+////}
 function Save() {
     debugger;
     var ToDoList = new Object();

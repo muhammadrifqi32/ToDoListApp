@@ -118,7 +118,7 @@ namespace ToDoList.Controllers
         }
 
         [HttpGet("user/list/{status}")]
-        public JsonResult List(int status)
+        public async Task<IActionResult> List(int status)
         {
             IEnumerable<Data.Model.ToDoList> todolist = null;
             var client = new HttpClient
@@ -127,14 +127,11 @@ namespace ToDoList.Controllers
             };
             client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
             //var userid = convert.toint32(httpcontext.session.getstring("id"));
-            var responseTask = client.GetAsync("ToDoLists/" + HttpContext.Session.GetString("id") +"/" + status);
-            responseTask.Wait();
-            var result = responseTask.Result;
-            if (result.IsSuccessStatusCode)
+            var responseTask = await client.GetAsync("ToDoLists/" + HttpContext.Session.GetString("id") +"/" + status);
+            if (responseTask.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<IList<Data.Model.ToDoList>>();
-                readTask.Wait();
-                todolist = readTask.Result;
+                var readTask = await responseTask.Content.ReadAsAsync<IList<Data.Model.ToDoList>>();
+                return Ok(new { data = readTask });
             }
             else
             {
