@@ -1,6 +1,7 @@
 ﻿var table = null;
 
 $(document).ready(function () {
+    debugger;
     table = $('#myTable').DataTable({
         //"processing": true, // for show progress bar  
         //"serverSide": true, // for process server side  
@@ -12,9 +13,8 @@ $(document).ready(function () {
         },
         "columnDefs":
             [{
-                "targets": [2],
-                "visible": false,
-                "searchable": false
+                "targets": [1,2],
+                "orderable": false
             }],
         "columns": [
             { "data": "name" },
@@ -28,13 +28,12 @@ $(document).ready(function () {
                     }
                 }
             },
-
             {
                 "render": function (data, type, row) {
-                    return '<button class="btn btn-warning hidden-sm-down btn-success" data-placement="left" data-toggle="tooltip" title="Edit" onclick="return GetById(' + row.id + ')"> <i class="mdi mdi-plus-circle"></i></button >' +
-                        '<button class="btn btn-warning hidden-sm-down btn-success" data-placement="left" data-toggle="tooltip" title="Edit" onclick="return Delete(' + row.id + ')"> <i class="mdi mdi-plus-circle"></i></button >'
+                    return '<button class="btn btn-warning " data-placement="left" data-toggle="tooltip" data-animation="false" title="Edit" onclick="return GetById(' + row.id + ')"> <i class="mdi mdi-pencil"></i></button >' + '&nbsp;' +
+                        '<button class="btn btn-danger" data-placement="right" data-toggle="tooltip" data-animation="false" title="Delete" onclick="return Delete(' + row.id + ')"> <i class="mdi mdi-eraser"></i></button >'
                 }
-            }]
+            }]      
     });
 });
 
@@ -101,7 +100,7 @@ function Save() {
                 type: 'success',
                 title: 'Insert Successfully'
             });
-            loadToDoList();
+            table.ajax.reload();
         }
         else {
             Swal.fire('Error', 'Insert Fail', 'error');
@@ -110,7 +109,7 @@ function Save() {
     });
     //}
 }
-function GetbyId(Id) {
+function GetById(Id) {
     debugger;
     $.ajax({
         url: "/User/GetbyId/" + Id,
@@ -155,7 +154,7 @@ function Update() {
                 showConfirmButton: false,
                 timer: 1500
             });
-            loadToDoList();
+            table.ajax.reload();
         }
         else {
             Swal.fire('Error', 'Update Fail', 'error');
@@ -185,7 +184,7 @@ function Delete(id) {
                         type: 'success',
                         title: 'Delete Successfully'
                     });
-                    loadToDoList();
+                    table.ajax.reload();
                 },
                 error: function (result) {
                     Swal.fire('Error', 'Failed to Delete', 'error');
