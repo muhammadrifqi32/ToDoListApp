@@ -89,25 +89,25 @@ namespace ToDoList.Controllers
             var result = client.PostAsync("users", byteContent).Result;
             if (result.IsSuccessStatusCode)
             {
-                MailMessage mm = new MailMessage("muhammadrifqi0@gmail.com", userVM.Email);
-                mm.Subject = "[Password] " + DateTime.Now.ToString("ddMMyyyyhhmmss");
-                mm.Body = "Hi " + userVM.Username + "\nThis Is Your New Password : " + userVM.Password;
+                //MailMessage mm = new MailMessage("muhammadrifqi0@gmail.com", userVM.Email);
+                //mm.Subject = "[Password] " + DateTime.Now.ToString("ddMMyyyyhhmmss");
+                //mm.Body = "Hi " + userVM.Username + "\nThis Is Your New Password : " + userVM.Password;
 
-                SmtpClient smtp = new SmtpClient();
-                smtp.Host = "smtp.gmail.com";
-                smtp.Port = 587;
-                smtp.EnableSsl = true;
+                //SmtpClient smtp = new SmtpClient();
+                //smtp.Host = "smtp.gmail.com";
+                //smtp.Port = 587;
+                //smtp.EnableSsl = true;
 
-                NetworkCredential nc = new NetworkCredential("muhammadrifqi0@gmail.com", "085376886737");
-                smtp.UseDefaultCredentials = false;
-                smtp.Credentials = nc;
-                smtp.Send(mm);
-                ViewBag.Message = "Password Has Been Sent.Check your email to login";
-                return Json(new { Success = true, Data = result });
+                //NetworkCredential nc = new NetworkCredential("muhammadrifqi0@gmail.com", "085376886737");
+                //smtp.UseDefaultCredentials = false;
+                //smtp.Credentials = nc;
+                //smtp.Send(mm);
+                //ViewBag.Message = "Password Has Been Sent.Check your email to login";
+                return Json(result);
             }
             else
             {
-                return Json(new { code = 1 });
+                return Json(result);
             }
         }
 

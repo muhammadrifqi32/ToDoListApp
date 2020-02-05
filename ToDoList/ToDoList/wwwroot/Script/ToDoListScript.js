@@ -11,9 +11,10 @@ $(document).ready(function () {
             url: "/User/List/" + $('#filter').val(),
             type: "GET"
         },
+        "responsive": true,
         "columnDefs":
             [{
-                "targets": [1,2],
+                "targets": [1, 2],
                 "orderable": false
             }],
         "columns": [
@@ -33,7 +34,7 @@ $(document).ready(function () {
                     return '<button class="btn btn-warning " data-placement="left" data-toggle="tooltip" data-animation="false" title="Edit" onclick="return GetById(' + row.id + ')"> <i class="mdi mdi-pencil"></i></button >' + '&nbsp;' +
                         '<button class="btn btn-danger" data-placement="right" data-toggle="tooltip" data-animation="false" title="Delete" onclick="return Delete(' + row.id + ')"> <i class="mdi mdi-eraser"></i></button >'
                 }
-            }]      
+            }]
     });
 });
 
@@ -84,30 +85,40 @@ function ClearScreen() {
 ////}
 function Save() {
     debugger;
-    var ToDoList = new Object();
-    ToDoList.id = $('#Id').val();
-    ToDoList.name = $('#name').val();
-    ToDoList.status = $('#status').val();
-    $.ajax({
-        type: 'POST',
-        url: '/User/InsertOrUpdate/',
-        data: ToDoList
-    }).then((result) => {
-        debugger;
-        if (result.statusCode == 200) {
-            Swal.fire({
-                position: 'center',
-                type: 'success',
-                title: 'Insert Successfully'
-            });
-            table.ajax.reload();
-        }
-        else {
-            Swal.fire('Error', 'Insert Fail', 'error');
-            ClearScreen();
-        }
-    });
-    //}
+    if ($('#name').val() == 0) {
+        Swal.fire({
+            position: 'center',
+            type: 'error',
+            title: 'Please Full Fill The To Do List Name',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    } else {
+        var ToDoList = new Object();
+        ToDoList.id = $('#Id').val();
+        ToDoList.name = $('#name').val();
+        ToDoList.status = $('#status').val();
+        $.ajax({
+            type: 'POST',
+            url: '/User/InsertOrUpdate/',
+            data: ToDoList
+        }).then((result) => {
+            debugger;
+            if (result.statusCode == 200) {
+                Swal.fire({
+                    position: 'center',
+                    type: 'success',
+                    title: 'Insert Successfully'
+                });
+                table.ajax.reload();
+            }
+            else {
+                Swal.fire('Error', 'Insert Fail', 'error');
+                ClearScreen();
+            }
+        });
+        //}
+    }
 }
 function GetById(Id) {
     debugger;
@@ -136,31 +147,41 @@ function GetById(Id) {
 }
 function Update() {
     debugger;
-    var data = new Object();
-    data.Id = $('#Id').val();
-    data.Name = $('#name').val();
-    data.Status = $('#status').val();
-    $.ajax({
-        url: "/User/InsertOrUpdate/",
-        data: data
-    }).then((result) => {
-        debugger;
-        $('#myModal').hide();
-        if (result.statusCode == 200) {
-            Swal.fire({
-                position: 'center',
-                type: 'success',
-                title: 'Update Successfully',
-                showConfirmButton: false,
-                timer: 1500
-            });
-            table.ajax.reload();
-        }
-        else {
-            Swal.fire('Error', 'Update Fail', 'error');
-            ClearScreen();
-        }
-    });
+    if ($('#name').val() == 0) {
+        Swal.fire({
+            position: 'center',
+            type: 'error',
+            title: 'Please Full Fill The To Do List Name',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    } else {
+        var data = new Object();
+        data.Id = $('#Id').val();
+        data.Name = $('#name').val();
+        data.Status = $('#status').val();
+        $.ajax({
+            url: "/User/InsertOrUpdate/",
+            data: data
+        }).then((result) => {
+            debugger;
+            $('#myModal').hide();
+            if (resultr) {
+                Swal.fire({
+                    position: 'center',
+                    type: 'success',
+                    title: 'Update Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                table.ajax.reload();
+            }
+            else {
+                Swal.fire('Error', 'Update Fail', 'error');
+                ClearScreen();
+            }
+        });
+    }
 }
 function Delete(id) {
     debugger;
