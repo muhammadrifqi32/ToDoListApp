@@ -29,7 +29,6 @@ namespace Data.Repository
             {
                 var procName = "SP_InsertToDoList"; //callsp
                 parameters.Add("@Name", toDoListVM.Name); //retrieve username
-                parameters.Add("@Status", toDoListVM.Status); //retrieve password
                 parameters.Add("@UserId", toDoListVM.UserId); //retrieve password
 
                 var todolist = connection.Execute(procName, parameters, commandType: CommandType.StoredProcedure); //toiinputdatausingdapper
@@ -91,6 +90,30 @@ namespace Data.Repository
                 return todolist;
             }
             //throw new NotImplementedException();
+        }
+
+        public int Checkedlist(int Id, ToDoList toDoList)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value))
+            {
+                var procName = "SP_CheckedList";
+                parameters.Add("@ID", Id);
+
+                var todolist = connection.Execute(procName, parameters, commandType: CommandType.StoredProcedure); //toiinputdatausingdapper
+                return todolist;
+            }
+        }
+
+        public int Uncheckedlist(int Id, ToDoList toDoList)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value))
+            {
+                var procName = "SP_UncheckedList";
+                parameters.Add("@ID", Id);
+
+                var todolist = connection.Execute(procName, parameters, commandType: CommandType.StoredProcedure); //toiinputdatausingdapper
+                return todolist;
+            }
         }
     }
 }

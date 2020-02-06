@@ -14,11 +14,40 @@ $(document).ready(function () {
         "responsive": true,
         "columnDefs":
             [{
-                "targets": [1, 2],
+                "targets": [0, 2, 3],
                 "orderable": false
             }],
         "columns": [
+            {
+                "render": function (data, type, row) {
+                    if (row.status == 0) {
+                        return '<button type="button" class="btn btn-secondary" id="Checked" onclick="return Checkedlist(' + row.id + ')"><i class="fa fa-square-o" title="Checked"></i></button>';
+                    }
+                    else {
+                        return '<button disabled type="button" class="btn btn-secondary" id="Unchecked" onclick="return Uncheckedlist(' + row.id + ')"><i class="fa fa-check-square-o" title="Unchecked"></i></button>';
+                    }
+                }
+            },
             { "data": "name" },
+            {
+                "data": "createDate", "render": function (data) {
+                    debugger;
+                    return moment(data).format('MMMM Do YYYY');
+                    //return moment(data).tz("Asia/Jakarta").format('MMMM Do YYYY, h:mm:ss a');
+                }
+            },
+            {
+                "data": "updateDate", "render": function (data) {
+                    var dateupdate = "Not Done Yet";
+                    var nulldate = "0001-01-01T00:00:00+00:00";
+                    debugger;
+                    if (data == nulldate) {
+                        return dateupdate;
+                    } else {
+                        return moment(data).format('MMMM Do YYYY');
+                    }
+                }
+            },
             {
                 "render": function (data, type, row) {
                     if (row.status == 0) {
@@ -31,15 +60,19 @@ $(document).ready(function () {
             },
             {
                 "render": function (data, type, row) {
-                    return '<button class="btn btn-warning " data-placement="left" data-toggle="tooltip" data-animation="false" title="Edit" onclick="return GetById(' + row.id + ')"> <i class="mdi mdi-pencil"></i></button >' + '&nbsp;' +
-                        '<button class="btn btn-danger" data-placement="right" data-toggle="tooltip" data-animation="false" title="Delete" onclick="return Delete(' + row.id + ')"> <i class="mdi mdi-eraser"></i></button >'
+                    if (row.status == 1) {
+                        return '<button disabled class="btn btn-danger" data-placement="right" data-toggle="tooltip" data-animation="false" title="Delete" onclick="return Delete(' + row.id + ')"> <i class="mdi mdi-eraser"></i></button >'
+                    }
+                    else {
+                        return '<button class="btn btn-danger" data-placement="right" data-toggle="tooltip" data-animation="false" title="Delete" onclick="return Delete(' + row.id + ')"> <i class="mdi mdi-eraser"></i></button >'
+                    }
                 }
             }]
     });
 });
 
 $('#filter').change(function () {
-    debugger;
+    //debugger;
     table.ajax.url('/User/list/' + $('#filter').val()).load();
 })
 function ClearScreen() {
@@ -97,7 +130,6 @@ function Save() {
         var ToDoList = new Object();
         ToDoList.id = $('#Id').val();
         ToDoList.name = $('#name').val();
-        ToDoList.status = $('#status').val();
         $.ajax({
             type: 'POST',
             url: '/User/InsertOrUpdate/',
@@ -121,7 +153,7 @@ function Save() {
     }
 }
 function GetById(Id) {
-    debugger;
+    //debugger;
     $.ajax({
         url: "/User/GetbyId/" + Id,
         type: "GET",
@@ -146,7 +178,7 @@ function GetById(Id) {
     return false;
 }
 function Update() {
-    debugger;
+    //debugger;
     if ($('#name').val() == 0) {
         Swal.fire({
             position: 'center',
@@ -159,12 +191,11 @@ function Update() {
         var data = new Object();
         data.Id = $('#Id').val();
         data.Name = $('#name').val();
-        data.Status = $('#status').val();
         $.ajax({
             url: "/User/InsertOrUpdate/",
             data: data
         }).then((result) => {
-            debugger;
+            //debugger;
             $('#myModal').hide();
             if (resultr) {
                 Swal.fire({
@@ -184,7 +215,7 @@ function Update() {
     }
 }
 function Delete(id) {
-    debugger;
+    //debugger;
     Swal.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -213,5 +244,49 @@ function Delete(id) {
                 }
             });
         };
+    });
+}
+function Checkedlist(Id) {
+    //debugger;
+    $.ajax({
+        url: "/User/CheckedTodoList/",
+        data: { id: Id },
+        type: "POST"
+    }).then((result) => {
+        if (result.statusCode == 200) {
+            Swal.fire({
+                position: 'center',
+                type: 'success',
+                title: 'Update Successfully',
+                showConfirmButton: false,
+                timer: 6000
+            });
+            table.ajax.reload();
+        }
+        else {
+            Swal.fire('Error!', 'Update Failed.', 'error');
+        }
+    });
+}
+function Uncheckedlist(Id) {
+    //debugger;
+    $.ajax({
+        url: "/User/UncheckedTodoList/",
+        data: { id: Id },
+        type: "POST"
+    }).then((result) => {
+        if (result.statusCode == 200) {
+            Swal.fire({
+                position: 'center',
+                type: 'success',
+                title: 'Update Successfully',
+                showConfirmButton: false,
+                timer: 6000
+            });
+            table.ajax.reload();
+        }
+        else {
+            Swal.fire('Error!', 'Update Failed.', 'error');
+        }
     });
 }

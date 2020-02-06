@@ -71,5 +71,29 @@ namespace API.Controllers
             }
             return BadRequest("Delete Failed!");
         }
+
+        [HttpPut]
+        [Route("Checkedlist/{id}")]
+        public IActionResult Checkedlist(int id, ToDoList toDoList)
+        {
+            var put = _todolistService.Checkedlist(id, toDoList);
+            if (put > 0)
+            {
+                return Ok(put);
+            }
+            return BadRequest("Checked Failed!");
+        }
+
+        [HttpPut]
+        [Route("Uncheckedlist/{id}")]
+        public IActionResult Uncheckedlist(int id, ToDoList toDoList)
+        {
+            var put = _todolistService.Uncheckedlist(id, toDoList);
+            if (put > 0)
+            {
+                return Ok(put);
+            }
+            return BadRequest("Unchecked Failed!");
+        }
     }
 }

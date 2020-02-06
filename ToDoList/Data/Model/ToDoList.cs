@@ -32,7 +32,7 @@ namespace Data.Model
             this.Status = toDoListVM.Status;
             this.UpdateDate = DateTimeOffset.Now;
         }
-        public void Delete(ToDoListVM toDoListVM)
+        public void Delete()
         {
             this.isDelete = true;
             this.DeleteDate = DateTimeOffset.Now;

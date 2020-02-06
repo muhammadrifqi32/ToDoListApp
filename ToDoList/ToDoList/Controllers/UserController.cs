@@ -189,5 +189,33 @@ namespace ToDoList.Controllers
             var result = client.DeleteAsync("todolists/" + id).Result;
             return Json(result);
         }
+        public JsonResult CheckedTodoList(int Id, Data.Model.ToDoList toDoList)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:44377/api/")
+            };
+            client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
+            var myContent = JsonConvert.SerializeObject(toDoList);
+            var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
+            var byteContent = new ByteArrayContent(buffer);
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var result = client.PutAsync("todolists/Checkedlist/" + Id, byteContent).Result;
+            return Json(result);
+        }
+        public JsonResult UncheckedTodoList(int Id, Data.Model.ToDoList toDoList)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:44377/api/")
+            };
+            client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
+            var myContent = JsonConvert.SerializeObject(toDoList);
+            var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
+            var byteContent = new ByteArrayContent(buffer);
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var result = client.PutAsync("todolists/Uncheckedlist/" + Id, byteContent).Result;
+            return Json(result);
+        }
     }
 }

@@ -14,5 +14,7 @@ namespace API.Service.Interface
         int Create(ToDoListVM toDoListVM);
         int Update(int Id, ToDoListVM toDoListVM);
         int Delete(int Id);
+        int Checkedlist(int Id, ToDoList toDoList);
+        int Uncheckedlist(int Id, ToDoList toDoList);
     }
 }

@@ -87,12 +87,12 @@
             }).then((result) => {
                 debugger;
                 if (result == 200) {
+                    debugger;    
                     Swal.fire({
                         position: 'center',
                         type: 'success',
                         title: 'Register Successfully, Please Login.'
                     });
-                    window.location.href = "/User";
                 }
                 else {
                     Swal.fire('Error', 'Register Failed', 'error');

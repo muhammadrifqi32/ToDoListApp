@@ -10,5 +10,7 @@ namespace Data.ViewModel
         public string Name { get; set; }
         public int Status { get; set; }
         public int UserId { get; set; }
+        public DateTimeOffset CreateDate { get; set; }
+        public DateTimeOffset UpdateDate { get; set; }
     }
 }

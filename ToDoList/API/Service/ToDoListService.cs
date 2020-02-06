@@ -19,6 +19,7 @@ namespace API.Service
         {
             _todolistRepository = todolistRepository;
         }
+
         public int Create(ToDoListVM toDoListVM)
         {
             return _todolistRepository.Create(toDoListVM);
@@ -47,6 +48,16 @@ namespace API.Service
         {
             return _todolistRepository.Update(Id, toDoListVM);
             //throw new NotImplementedException();
+        }
+
+        public int Checkedlist(int Id, ToDoList toDoList)
+        {
+            return _todolistRepository.Checkedlist(Id, toDoList);
+        }
+
+        public int Uncheckedlist(int Id, ToDoList toDoList)
+        {
+            return _todolistRepository.Uncheckedlist(Id, toDoList);
         }
     }
 }
