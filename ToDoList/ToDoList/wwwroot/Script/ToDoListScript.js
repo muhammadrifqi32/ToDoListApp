@@ -32,8 +32,7 @@ $(document).ready(function () {
             {
                 "data": "createDate", "render": function (data) {
                     debugger;
-                    return moment(data).format('MMMM Do YYYY');
-                    //return moment(data).tz("Asia/Jakarta").format('MMMM Do YYYY, h:mm:ss a');
+                    return moment(data).tz("Asia/Jakarta").format('MMMM Do YYYY, h:mm:ss a');
                 }
             },
             {
@@ -44,7 +43,7 @@ $(document).ready(function () {
                     if (data == nulldate) {
                         return dateupdate;
                     } else {
-                        return moment(data).format('MMMM Do YYYY');
+                        return moment(data).tz("Asia/Jakarta").format('MMMM Do YYYY, h:mm:ss a');
                     }
                 }
             },
