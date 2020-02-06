@@ -115,5 +115,35 @@ namespace Data.Repository
                 return todolist;
             }
         }
+
+        public async Task<IEnumerable<ToDoListVM>> Search(int Id, int status, string keyword)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value))
+            {
+                var procName = "SP_Search";
+                parameters.Add("@ID", Id);
+                parameters.Add("@status", status);
+                parameters.Add("@SearchKey", keyword);
+
+                var todolist = await connection.QueryAsync<ToDoListVM>(procName, parameters, commandType: CommandType.StoredProcedure); //await ada jeda. bermanfaat untuk banyak data
+                return todolist;
+            }
+        }
+
+        public async Task<IEnumerable<ToDoListVM>> Paging(int Id, int status, string keyword, int pageSize, int pageNumber)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value))
+            {
+                var procName = "SP_Paging";
+                parameters.Add("@ID", Id);
+                parameters.Add("@status", status);
+                parameters.Add("@SearchKey", keyword);
+                parameters.Add("@pageSize", pageSize);
+                parameters.Add("@pageNumber", pageNumber);
+
+                var todolist = await connection.QueryAsync<ToDoListVM>(procName, parameters, commandType: CommandType.StoredProcedure); //await ada jeda. bermanfaat untuk banyak data
+                return todolist;
+            }
+        }
     }
 }

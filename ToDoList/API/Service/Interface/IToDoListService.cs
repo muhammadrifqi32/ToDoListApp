@@ -16,5 +16,7 @@ namespace API.Service.Interface
         int Delete(int Id);
         int Checkedlist(int Id, ToDoList toDoList);
         int Uncheckedlist(int Id, ToDoList toDoList);
+        Task<IEnumerable<ToDoListVM>> Search(int Id, int status, string keyword);
+        Task<IEnumerable<ToDoListVM>> Paging(int Id, int status, string keyword, int pageSize, int pageNumber);
     }
 }

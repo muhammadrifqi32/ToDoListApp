@@ -8,6 +8,8 @@ using System.Net.Mail;
 using System.Threading.Tasks;
 using Data.Model;
 using Data.ViewModel;
+using DataTables.AspNet.AspNetCore;
+using DataTables.AspNet.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -127,7 +129,7 @@ namespace ToDoList.Controllers
             };
             client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
             //var userid = convert.toint32(httpcontext.session.getstring("id"));
-            var responseTask = await client.GetAsync("ToDoLists/" + HttpContext.Session.GetString("id") +"/" + status);
+            var responseTask = await client.GetAsync("ToDoLists/" + HttpContext.Session.GetString("id") + "/" + status);
             if (responseTask.IsSuccessStatusCode)
             {
                 var readTask = await responseTask.Content.ReadAsAsync<IList<Data.Model.ToDoList>>();
@@ -216,6 +218,58 @@ namespace ToDoList.Controllers
             byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             var result = client.PutAsync("todolists/Uncheckedlist/" + Id, byteContent).Result;
             return Json(result);
+        }
+
+        public async Task<IEnumerable<ToDoListVM>> Search(string keyword, int status)
+        {
+            try
+            {
+                client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
+                //var userid = convert.toint32(httpcontext.session.getstring("id"));
+                var responseTask = await client.GetAsync("ToDoLists/Search/" + HttpContext.Session.GetString("id") + "/" + status + "/" + keyword);
+                if (responseTask.IsSuccessStatusCode)
+                {
+                    var readTask = await responseTask.Content.ReadAsAsync<IList<ToDoListVM>>();
+                    return readTask;
+                }
+
+            }
+            catch(Exception)
+            {
+
+            }
+            return null;
+        }
+        public async Task<IEnumerable<ToDoListVM>> Paging(int pageSize, int pageNumber,string keyword, int status)
+        {
+            try
+            {
+                var responseTask = await client.GetAsync("ToDoLists/Paging/" + HttpContext.Session.GetString("id") + "/" + status +"/" + keyword + "/" + pageSize + "/" + pageNumber);
+                if (responseTask.IsSuccessStatusCode)
+                {
+                    var readTask = await responseTask.Content.ReadAsAsync<IList<ToDoListVM>>();
+                    return readTask;
+                }
+
+            }
+            catch (Exception)
+            {
+
+            }
+            return null;
+        }
+
+        [HttpGet("user/pagedata/{status}")]
+        public IActionResult PageData(int status, IDataTablesRequest request)
+        {
+            var pageSize = request.Length;
+            var pageNumber = request.Start / request.Length + 1;
+            var keyword = "val" + request.Search.Value;
+            var data = Search(keyword, status).Result;
+            var filteredData = data;
+            var dataPage = Paging(pageSize, pageNumber, keyword, status).Result;
+            var response = DataTablesResponse.Create(request, data.Count(), filteredData.Count(), dataPage);
+            return new DataTablesJsonResult(response, true);
         }
     }
 }

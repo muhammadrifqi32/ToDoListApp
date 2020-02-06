@@ -3,12 +3,12 @@
 $(document).ready(function () {
     debugger;
     table = $('#myTable').DataTable({
+        "serverSide": true, // for process server side  
         //"processing": true, // for show progress bar  
-        //"serverSide": true, // for process server side  
         //"filter": true, // this is for disable filter (search box)  
         //"orderMulti": false, // for disable multiple column at once 
         "ajax": {
-            url: "/User/List/" + $('#filter').val(),
+            url: "/User/PageData/" + $('#filter').val(),
             type: "GET"
         },
         "responsive": true,
@@ -72,7 +72,7 @@ $(document).ready(function () {
 
 $('#filter').change(function () {
     //debugger;
-    table.ajax.url('/User/list/' + $('#filter').val()).load();
+    table.ajax.url('/User/PageData/' + $('#filter').val()).load();
 })
 function ClearScreen() {
     $('#Id').val('');

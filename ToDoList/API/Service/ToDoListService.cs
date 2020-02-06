@@ -59,5 +59,15 @@ namespace API.Service
         {
             return _todolistRepository.Uncheckedlist(Id, toDoList);
         }
+
+        public Task<IEnumerable<ToDoListVM>> Search(int Id, int status, string keyword)
+        {
+            return _todolistRepository.Search(Id, status, keyword);
+        }
+
+        public Task<IEnumerable<ToDoListVM>> Paging(int Id, int status, string keyword, int pageSize, int pageNumber)
+        {
+            return _todolistRepository.Paging(Id, status, keyword, pageSize, pageNumber);
+        }
     }
 }
