@@ -32,19 +32,13 @@ namespace Data.Repository
         {
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value))
             {
+                var procName = "SP_InsertUser"; //callsp
+                parameters.Add("@Email", userVM.Email); //retrieve username
+                parameters.Add("@Username", userVM.Username); //retrieve username
+                parameters.Add("@Password", userVM.Password); //retrieve password
 
-                var checkuser = connection.Query<User>("exec SP_CheckRegister @Username, @Email", new { Username = userVM.Username, Email = userVM.Email }).SingleOrDefault();
-                if (checkuser == null)
-                {
-                    var procName = "SP_InsertUser"; //callsp
-                    parameters.Add("@Email", userVM.Email); //retrieve username
-                    parameters.Add("@Username", userVM.Username); //retrieve username
-                    parameters.Add("@Password", userVM.Password); //retrieve password
-
-                    var users = connection.Execute(procName, parameters, commandType: CommandType.StoredProcedure); //toiinputdatausingdapper
-                    return users;
-                }
-                return 0;
+                var users = connection.Execute(procName, parameters, commandType: CommandType.StoredProcedure); //toiinputdatausingdapper
+                return users;
             }
             //throw new NotImplementedException();
         }
