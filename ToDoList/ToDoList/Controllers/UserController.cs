@@ -77,7 +77,8 @@ namespace ToDoList.Controllers
 
 
         [HttpPost]
-        public JsonResult Register(UserVM userVM)
+        //[AutoValidateAntiforgeryToken]
+        public ActionResult Register(UserVM userVM)
         {
             userVM.Password = Hashing.HashPassword(userVM.Password);
             var client = new HttpClient
@@ -105,11 +106,11 @@ namespace ToDoList.Controllers
                 //smtp.Credentials = nc;
                 //smtp.Send(mm);
                 //ViewBag.Message = "Password Has Been Sent.Check your email to login";
-                return Json(result);
+                return RedirectToAction("Login");
             }
             else
             {
-                return Json(result);
+                return View();
             }
         }
 
