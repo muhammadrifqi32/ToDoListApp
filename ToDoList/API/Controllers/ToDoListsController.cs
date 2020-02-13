@@ -96,20 +96,32 @@ namespace API.Controllers
             return BadRequest("Unchecked Failed!");
         }
 
-        [HttpGet]
-        [Route("Search/{id}/{status}/{keyword}")]
-        public Task<IEnumerable<ToDoListVM>> Search(int id, int status, string keyword)
-        {
-            keyword = keyword.Substring(3);
-            return _todolistService.Search(id, status, keyword);
-        }
+        //[HttpGet]
+        //[Route("Search/{id}/{status}/{keyword}")]
+        //public Task<IEnumerable<ToDoListVM>> Search(int id, int status, string keyword)
+        //{
+        //    keyword = keyword.Substring(3);
+        //    return _todolistService.Search(id, status, keyword);
+        //}
 
+        //[HttpGet]
+        //[Route("Paging/{id}/{status}/{keyword}/{pageSize}/{pageNumber}")]
+        //public Task<IEnumerable<ToDoListVM>> Paging(int id, int status, string keyword, int pageSize, int pageNumber)
+        //{
+        //    keyword = keyword.Substring(3);
+        //    return _todolistService.Paging(id, status, keyword, pageSize, pageNumber);
+        //}
+        
         [HttpGet]
-        [Route("Paging/{id}/{status}/{keyword}/{pageSize}/{pageNumber}")]
-        public Task<IEnumerable<ToDoListVM>> Paging(int id, int status, string keyword, int pageSize, int pageNumber)
+        [Route("PageSearch")]
+        public async Task<ToDoListVM> PageSearch(int id, int status, string keyword, int pageSize, int pageNumber)
         {
-            keyword = keyword.Substring(3);
-            return _todolistService.Paging(id, status, keyword, pageSize, pageNumber);
+            //keyword = keyword.Substring(3);
+            if (keyword == null)
+            {
+                keyword = "";
+            }
+            return await _todolistService.PageSearch(id, status, keyword, pageSize, pageNumber);
         }
     }
 }

@@ -116,33 +116,57 @@ namespace Data.Repository
             }
         }
 
-        public async Task<IEnumerable<ToDoListVM>> Search(int Id, int status, string keyword)
+        //public async Task<IEnumerable<ToDoListVM>> Search(int Id, int status, string keyword)
+        //{
+        //    using (SqlConnection connection = new SqlConnection(_connectionStrings.Value))
+        //    {
+        //        var procName = "SP_Search";
+        //        parameters.Add("@ID", Id);
+        //        parameters.Add("@status", status);
+        //        parameters.Add("@SearchKey", keyword);
+
+        //        var todolist = await connection.QueryAsync<ToDoListVM>(procName, parameters, commandType: CommandType.StoredProcedure); //await ada jeda. bermanfaat untuk banyak data
+        //        return todolist;
+        //    }
+        //}
+
+        //public async Task<IEnumerable<ToDoListVM>> Paging(int Id, int status, string keyword, int pageSize, int pageNumber)
+        //{
+        //    using (SqlConnection connection = new SqlConnection(_connectionStrings.Value))
+        //    {
+        //        var procName = "SP_Paging";
+        //        parameters.Add("@ID", Id);
+        //        parameters.Add("@status", status);
+        //        parameters.Add("@SearchKey", keyword);
+        //        parameters.Add("@pageSize", pageSize);
+        //        parameters.Add("@pageNumber", pageNumber);
+
+        //        var todolist = await connection.QueryAsync<ToDoListVM>(procName, parameters, commandType: CommandType.StoredProcedure); //await ada jeda. bermanfaat untuk banyak data
+        //        return todolist;
+        //    }
+        //}
+
+        public async Task<ToDoListVM> PageSearch(int Id, int status, string keyword, int pageSize, int pageNumber)
         {
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value))
             {
-                var procName = "SP_Search";
-                parameters.Add("@ID", Id);
-                parameters.Add("@status", status);
-                parameters.Add("@SearchKey", keyword);
-
-                var todolist = await connection.QueryAsync<ToDoListVM>(procName, parameters, commandType: CommandType.StoredProcedure); //await ada jeda. bermanfaat untuk banyak data
-                return todolist;
-            }
-        }
-
-        public async Task<IEnumerable<ToDoListVM>> Paging(int Id, int status, string keyword, int pageSize, int pageNumber)
-        {
-            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value))
-            {
-                var procName = "SP_Paging";
+                var procName = "SP_PageSearch";
                 parameters.Add("@ID", Id);
                 parameters.Add("@status", status);
                 parameters.Add("@SearchKey", keyword);
                 parameters.Add("@pageSize", pageSize);
                 parameters.Add("@pageNumber", pageNumber);
+                parameters.Add("@length", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                parameters.Add("@filterlength", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-                var todolist = await connection.QueryAsync<ToDoListVM>(procName, parameters, commandType: CommandType.StoredProcedure); //await ada jeda. bermanfaat untuk banyak data
-                return todolist;
+                var result = new ToDoListVM();
+
+                result.data = await connection.QueryAsync<ToDoListVM>(procName, parameters, commandType: CommandType.StoredProcedure); //await ada jeda. bermanfaat untuk banyak data
+                int filterlength = parameters.Get<int>("@filterlength");
+                result.filterlength = filterlength;
+                int length = parameters.Get<int>("@length");
+                result.length = length;
+                return result;
             }
         }
     }

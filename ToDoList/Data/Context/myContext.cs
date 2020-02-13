@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Data.Model;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace Data.Context
 {
-    public class MyContext : DbContext
+    public class MyContext : IdentityDbContext
     {
         private readonly IServiceProvider _serviceProvider;
         public DbSet<User> Users { get; set; }

@@ -6,11 +6,14 @@ namespace Data.ViewModel
 {
     public class ToDoListVM
     {
+        public IEnumerable<ToDoListVM> data { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
         public int Status { get; set; }
         public int UserId { get; set; }
         public DateTimeOffset CreateDate { get; set; }
         public DateTimeOffset UpdateDate { get; set; }
+        public int length { get; set; }
+        public int filterlength { get; set; }
     }
 }

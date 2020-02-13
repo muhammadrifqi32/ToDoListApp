@@ -1,7 +1,7 @@
 ﻿var table = null;
 
 $(document).ready(function () {
-    debugger;
+    //debugger;
     table = $('#myTable').DataTable({
         "serverSide": true, // for process server side  
         //"processing": true, // for show progress bar  
@@ -31,7 +31,7 @@ $(document).ready(function () {
             { "data": "name" },
             {
                 "data": "createDate", "render": function (data) {
-                    debugger;
+                    //debugger;
                     return moment(data).tz("Asia/Jakarta").format('MMMM Do YYYY, h:mm:ss a');
                 }
             },
@@ -39,7 +39,7 @@ $(document).ready(function () {
                 "data": "updateDate", "render": function (data) {
                     var dateupdate = "Not Done Yet";
                     var nulldate = "0001-01-01T00:00:00+00:00";
-                    debugger;
+                    //debugger;
                     if (data == nulldate) {
                         return dateupdate;
                     } else {

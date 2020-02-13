@@ -220,34 +220,36 @@ namespace ToDoList.Controllers
             return Json(result);
         }
 
-        public async Task<IEnumerable<ToDoListVM>> Search(string keyword, int status)
+        //public async Task<IEnumerable<ToDoListVM>> Search(string keyword, int status)
+        //{
+        //    try
+        //    {
+        //        client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
+        //        //var userid = convert.toint32(httpcontext.session.getstring("id"));
+        //        var responseTask = await client.GetAsync("ToDoLists/Search/" + HttpContext.Session.GetString("id") + "/" + status + "/" + keyword);
+        //        if (responseTask.IsSuccessStatusCode)
+        //        {
+        //            var readTask = await responseTask.Content.ReadAsAsync<IList<ToDoListVM>>();
+        //            return readTask;
+        //        }
+
+        //    }
+        //    catch(Exception)
+        //    {
+
+        //    }
+        //    return null;
+        //}
+
+        public async Task<ToDoListVM> Paging(int pageSize, int pageNumber,string keyword, int status)
         {
             try
             {
                 client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
-                //var userid = convert.toint32(httpcontext.session.getstring("id"));
-                var responseTask = await client.GetAsync("ToDoLists/Search/" + HttpContext.Session.GetString("id") + "/" + status + "/" + keyword);
+                var responseTask = await client.GetAsync("ToDoLists/pagesearch?id=" + HttpContext.Session.GetString("id") + "&status=" + status + "&keyword=" + keyword + "&pageSize=" + pageSize + "&pageNumber=" + pageNumber);
                 if (responseTask.IsSuccessStatusCode)
                 {
-                    var readTask = await responseTask.Content.ReadAsAsync<IList<ToDoListVM>>();
-                    return readTask;
-                }
-
-            }
-            catch(Exception)
-            {
-
-            }
-            return null;
-        }
-        public async Task<IEnumerable<ToDoListVM>> Paging(int pageSize, int pageNumber,string keyword, int status)
-        {
-            try
-            {
-                var responseTask = await client.GetAsync("ToDoLists/Paging/" + HttpContext.Session.GetString("id") + "/" + status +"/" + keyword + "/" + pageSize + "/" + pageNumber);
-                if (responseTask.IsSuccessStatusCode)
-                {
-                    var readTask = await responseTask.Content.ReadAsAsync<IList<ToDoListVM>>();
+                    var readTask = await responseTask.Content.ReadAsAsync<ToDoListVM>();
                     return readTask;
                 }
 
@@ -264,11 +266,11 @@ namespace ToDoList.Controllers
         {
             var pageSize = request.Length;
             var pageNumber = request.Start / request.Length + 1;
-            var keyword = "val" + request.Search.Value;
-            var data = Search(keyword, status).Result;
-            var filteredData = data;
+            var keyword = request.Search.Value;
+            //var data = Search(keyword, status).Result;
+            //var filteredData = data;
             var dataPage = Paging(pageSize, pageNumber, keyword, status).Result;
-            var response = DataTablesResponse.Create(request, data.Count(), filteredData.Count(), dataPage);
+            var response = DataTablesResponse.Create(request, dataPage.length, dataPage.filterlength, dataPage.data);
             return new DataTablesJsonResult(response, true);
         }
     }
