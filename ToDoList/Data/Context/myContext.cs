@@ -14,6 +14,8 @@ namespace Data.Context
         private readonly IServiceProvider _serviceProvider;
         public DbSet<User> Users { get; set; }
         public DbSet<ToDoList> ToDoList { get; set; }
+        public DbSet<Supp> Supps { get; set; }
+        public DbSet<Itemm> Itemms { get; set; }
 
         public MyContext() { }
 

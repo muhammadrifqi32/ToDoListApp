@@ -50,9 +50,13 @@ namespace API
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IToDoListRepository, ToDoListRepository>();
+            services.AddScoped<ISuppRepository, SuppRepository>();
+            services.AddScoped<IItemmRepository, ItemmRepository>();
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IToDoListService, ToDoListService>();
+            services.AddScoped<ISuppService, SuppService>();
+            services.AddScoped<IItemmService, ItemmService>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
