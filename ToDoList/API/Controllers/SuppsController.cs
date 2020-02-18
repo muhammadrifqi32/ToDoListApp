@@ -24,7 +24,7 @@ namespace API.Controllers
             _suppsService = suppsService;
         }
         [HttpGet]
-        public Task<IEnumerable<Supp>> Get()
+        public IEnumerable<Supp> Get()
         {
             return _suppsService.Get();
         }

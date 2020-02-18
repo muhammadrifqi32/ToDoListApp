@@ -57,6 +57,32 @@ namespace ToDoList.Controllers
             return Json(supp);
         }
 
+        public JsonResult LoadSupplier()
+        {
+            IEnumerable<Supp> supp = null;
+
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:44377/api/")
+            };
+            client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
+            var responseTask = client.GetAsync("Supps");
+            responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<IList<Supp>>();
+                readTask.Wait();
+                supp = readTask.Result;
+            }
+            else
+            {
+                supp = Enumerable.Empty<Supp>();
+                ModelState.AddModelError(string.Empty, "Server Error");
+            }
+            return Json(supp);
+        }
+
         public async Task<SuppVM> Paging(int pageSize, int pageNumber, string keyword)
         {
             try

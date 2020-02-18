@@ -13,12 +13,12 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ItemmController : ControllerBase
+    public class ItemmsController : ControllerBase
     {
         public IConfiguration _configuration;
         private IItemmService _itemmService;
 
-        public ItemmController(IConfiguration config, IItemmService itemmService)
+        public ItemmsController(IConfiguration config, IItemmService itemmService)
         {
             _configuration = config;
             _itemmService = itemmService;

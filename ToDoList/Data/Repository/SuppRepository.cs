@@ -51,13 +51,13 @@ namespace Data.Repository
             }
         }
 
-        public async Task<IEnumerable<Supp>> Get()
+        public IEnumerable<Supp> Get()
         {
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value))
             {
                 var procName = "SP_GetAllSupp"; //
 
-                var supps = await connection.QueryAsync<Supp>(procName, commandType: CommandType.StoredProcedure); //await ada jeda. bermanfaat untuk banyak data
+                var supps = connection.Query<Supp>(procName, commandType: CommandType.StoredProcedure); //await ada jeda. bermanfaat untuk banyak data
                 return supps;
             }
         }

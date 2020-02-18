@@ -22,7 +22,7 @@
                     <div class="row page-titles">
                         <div class="col-md-6 col-8">
                             <span data-toggle="modal" data-target="#myModal" onclick="ClearScreen();">
-                                <button class="btn pull-left hidden-sm-down btn-success" data-placement="right" data-toggle="tooltip" title="Add Supplier"><i class="mdi mdi-plus-circle"></i></button>
+                                <button class="btn pull-left hidden-sm-down btn-success" data-placement="right" data-toggle="tooltip" title="Add Item"><i class="mdi mdi-plus-circle"></i></button>
                             </span>
                         </div>
                         <div class="modal fade" id="myModal" role="dialog">
@@ -41,7 +41,19 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Name">Name:</label>
-                                                    <input type="text" class="form-control" id="name" placeholder="Enter Supplier" name="Name" required autocomplete="off">
+                                                    <input type="text" class="form-control" id="name" placeholder="Enter Item" name="Name" required autocomplete="off">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="Stock">Stock:</label>
+                                                    <input type="number" class="form-control" id="stock" placeholder="Enter Stock" name="Stock" required autocomplete="off">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="Price">Price:</label>
+                                                    <input type="number" class="form-control" id="price" placeholder="Enter Price" name="Price" required autocomplete="off">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="SupplierName">Supplier:</label>
+                                                    <select id="Supplier" name="SupplierName" class="form-control"></select>
                                                 </div>
                                             </form>
                                         </div>
@@ -59,11 +71,14 @@
                         <table id="myTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
+                                    <th>Item Name</th>
+                                    <th>Stock</th>
+                                    <th>Price</th>
                                     <th>Supplier Name</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody class="supplierbody" />
+                            <tbody class="itemmbody" />
                         </table>
                     </div>
                 </div>
@@ -104,6 +119,6 @@
         });
     </script>
     <script src="~/Script/sweetalet2@9.js"></script>
-    <script src="~/Script/SuppScript.js"></script>
+    <script src="~/Script/ItemmScript.js"></script>
     <script src="~/monster-admin-lite-master/assets/plugins/styleswitcher/jQuery.style.switcher.js"></script>
 }

@@ -30,7 +30,7 @@ namespace API.Service
             return _suppRepository.Delete(Id);
         }
 
-        public Task<IEnumerable<Supp>> Get()
+        public IEnumerable<Supp> Get()
         {
             return _suppRepository.Get();
         }

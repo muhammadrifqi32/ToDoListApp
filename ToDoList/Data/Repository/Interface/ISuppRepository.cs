@@ -9,7 +9,7 @@ namespace Data.Repository.Interface
 {
     public interface ISuppRepository
     {
-        Task<IEnumerable<Supp>> Get();
+        IEnumerable<Supp> Get();
         Task<IEnumerable<Supp>> Get(int Id);
         int Create(SuppVM suppVM);
         int Update(int Id, SuppVM suppVM);
