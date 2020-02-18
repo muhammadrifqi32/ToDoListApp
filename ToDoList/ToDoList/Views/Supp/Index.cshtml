@@ -22,7 +22,7 @@
                     <div class="row page-titles">
                         <div class="col-md-6 col-8">
                             <span data-toggle="modal" data-target="#myModal" onclick="ClearScreen();">
-                                <button class="btn pull-left hidden-sm-down btn-success" data-placement="right" data-toggle="tooltip" title="Add To Do List"><i class="mdi mdi-plus-circle"></i></button>
+                                <button class="btn pull-left hidden-sm-down btn-success" data-placement="right" data-toggle="tooltip" title="Add Supplier"><i class="mdi mdi-plus-circle"></i></button>
                             </span>
                         </div>
                         <div class="modal fade" id="myModal" role="dialog">
@@ -41,7 +41,7 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Name">Name:</label>
-                                                    <input type="text" class="form-control" id="name" placeholder="Enter To Do List" name="Name" required autocomplete="off">
+                                                    <input type="text" class="form-control" id="name" placeholder="Enter Supplier" name="Name" required autocomplete="off">
                                                 </div>
                                             </form>
                                         </div>
@@ -59,21 +59,11 @@
                         <table id="myTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th>Check</th>
-                                    <th>To Do List</th>
-                                    <th>Assign Date</th>
-                                    <th>Done Date</th>
-                                    <th>
-                                        <select class="pull-left" id="filter">
-                                            <option value="2">All</option>
-                                            <option value="0">On Progress</option>
-                                            <option value="1">Done</option>
-                                        </select>
-                                    </th>
+                                    <th>Supplier Name</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody class="todolistbody" />
+                            <tbody class="supplierbody" />
                         </table>
                     </div>
                 </div>
@@ -128,6 +118,6 @@
         });
     </script>
     <script src="~/Script/sweetalet2@9.js"></script>
-    <script src="~/Script/ToDoListScript.js"></script>
+    <script src="~/Script/SuppScript.js"></script>
     <script src="~/monster-admin-lite-master/assets/plugins/styleswitcher/jQuery.style.switcher.js"></script>
 }

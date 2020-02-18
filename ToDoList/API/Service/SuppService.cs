@@ -44,5 +44,9 @@ namespace API.Service
         {
             return _suppRepository.Update(Id, suppVM);
         }
+        public Task<SuppVM> PageSearch(string keyword, int pageSize, int pageNumber)
+        {
+            return _suppRepository.PageSearch(keyword, pageSize, pageNumber);
+        }
     }
 }

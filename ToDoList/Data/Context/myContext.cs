@@ -16,6 +16,7 @@ namespace Data.Context
         public DbSet<ToDoList> ToDoList { get; set; }
         public DbSet<Supp> Supps { get; set; }
         public DbSet<Itemm> Itemms { get; set; }
+        public DbSet<Department> Departments { get; set; }
 
         public MyContext() { }
 

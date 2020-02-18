@@ -14,5 +14,6 @@ namespace API.Service.Interface
         int Create(SuppVM suppVM);
         int Update(int Id, SuppVM suppVM);
         int Delete(int Id);
+        Task<SuppVM> PageSearch(string keyword, int pageSize, int pageNumber);
     }
 }

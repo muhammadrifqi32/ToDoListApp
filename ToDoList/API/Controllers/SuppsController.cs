@@ -69,5 +69,17 @@ namespace API.Controllers
             }
             return BadRequest("Delete Failed!");
         }
+
+        [HttpGet]
+        [Route("PageSearch")]
+        public async Task<SuppVM> PageSearch(string keyword, int pageSize, int pageNumber)
+        {
+            //keyword = keyword.Substring(3);
+            if (keyword == null)
+            {
+                keyword = "";
+            }
+            return await _suppsService.PageSearch(keyword, pageSize, pageNumber);
+        }
     }
 }

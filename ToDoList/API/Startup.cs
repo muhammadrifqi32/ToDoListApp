@@ -22,6 +22,7 @@ using Microsoft.Extensions.Logging;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Data.Repository.Data;
 
 namespace API
 {
@@ -52,6 +53,7 @@ namespace API
             services.AddScoped<IToDoListRepository, ToDoListRepository>();
             services.AddScoped<ISuppRepository, SuppRepository>();
             services.AddScoped<IItemmRepository, ItemmRepository>();
+            services.AddScoped<DepartmentRepository>();
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IToDoListService, ToDoListService>();

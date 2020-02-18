@@ -4,8 +4,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Data.Model;
+using Data.ViewModel;
+using DataTables.AspNet.AspNetCore;
+using DataTables.AspNet.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace ToDoList.Controllers
 {
@@ -22,82 +27,118 @@ namespace ToDoList.Controllers
         // GET: Supp
         public ActionResult Index()
         {
-            return View();
+            //return View(List());
+            var Id = HttpContext.Session.GetString("id");
+            if (Id != null)
+            {
+                return View(List());
+            }
+            return RedirectToAction("Login","User");
         }
-
-        // GET: Supp/Details/5
-        public ActionResult Details(int id)
+        public async Task<IActionResult> List()
         {
-            return View();
+            IEnumerable<Supp> supp = null;
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:44377/api/")
+            };
+            client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
+            var responseTask = await client.GetAsync("Supps");
+            if (responseTask.IsSuccessStatusCode)
+            {
+                var readTask = await responseTask.Content.ReadAsAsync<IList<Supp>>();
+                return Ok(new { data = readTask });
+            }
+            else
+            {
+                supp = Enumerable.Empty<Supp>();
+                ModelState.AddModelError(string.Empty, "server error, try after some time");
+            }
+            return Json(supp);
         }
 
-        // GET: Supp/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Supp/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<SuppVM> Paging(int pageSize, int pageNumber, string keyword)
         {
             try
             {
-                // TODO: Add insert logic here
+                client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
+                var responseTask = await client.GetAsync("Supps/pagesearch" + "&keyword=" + keyword + "&pageSize=" + pageSize + "&pageNumber=" + pageNumber);
+                if (responseTask.IsSuccessStatusCode)
+                {
+                    var readTask = await responseTask.Content.ReadAsAsync<SuppVM>();
+                    return readTask;
+                }
 
-                return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception)
             {
-                return View();
+
+            }
+            return null;
+        }
+
+        [HttpGet("supp/pagedata/")]
+        public IActionResult PageData(IDataTablesRequest request)
+        {
+            var pageSize = request.Length;
+            var pageNumber = request.Start / request.Length + 1;
+            var keyword = request.Search.Value;
+            //var data = Search(keyword, status).Result;
+            //var filteredData = data;
+            var dataPage = Paging(pageSize, pageNumber, keyword).Result;
+            var response = DataTablesResponse.Create(request, dataPage.length, dataPage.filterlength, dataPage.data);
+            return new DataTablesJsonResult(response, true);
+        }
+
+        public JsonResult InsertOrUpdate(SuppVM suppVM)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:44377/api/")
+            };
+            client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
+            var myContent = JsonConvert.SerializeObject(suppVM);
+            var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
+            var byteContent = new ByteArrayContent(buffer);
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            if (suppVM.Id == 0)
+            {
+                var result = client.PostAsync("supps", byteContent).Result;
+                return Json(result);
+            }
+            else
+            {
+                var result = client.PutAsync("supps/" + suppVM.Id, byteContent).Result;
+                return Json(result);
             }
         }
 
-        // GET: Supp/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<JsonResult> GetById(int id)
         {
-            return View();
+            client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
+            HttpResponseMessage response = await client.GetAsync("supps");
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadAsAsync<IList<SuppVM>>();
+                var supp = data.FirstOrDefault(t => t.Id == id);
+                var json = JsonConvert.SerializeObject(supp, Formatting.None, new JsonSerializerSettings()
+                {
+                    ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                });
+                return Json(json);
+            }
+            return Json("internal server error");
         }
 
-        // POST: Supp/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public JsonResult Delete(int id)
         {
-            try
+            var client = new HttpClient
             {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Supp/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Supp/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+                BaseAddress = new Uri("https://localhost:44377/api/")
+            };
+            client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
+            var result = client.DeleteAsync("supps/" + id).Result;
+            return Json(result);
         }
     }
 }
