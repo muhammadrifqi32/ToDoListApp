@@ -1,21 +1,21 @@
 ﻿var table = null;
 
 $(document).ready(function () {
-    debugger;
+    //debugger;
     table = $('#myTable').DataTable({
-        //"serverSide": true, // for process server side  
+        "serverSide": true, // for process server side  
         //"processing": true, // for show progress bar  
         //"filter": true, // this is for disable filter (search box)  
         //"orderMulti": false, // for disable multiple column at once 
         "ajax": {
-            //url: "/Supp/PageData/",
-            url: "/Supp/List/",
+            url: "/Supp/PageData/",
+            //url: "/Supp/List/",
             type: "GET"
         },
         "responsive": true,
         "columnDefs":
             [{
-                "targets": [0, 1],
+                "targets": [1],
                 "orderable": false
             }],
         "columns": [
@@ -54,7 +54,7 @@ function Save() {
             url: '/Supp/InsertOrUpdate/',
             data: Supp
         }).then((result) => {
-            debugger;
+            //debugger;
             if (result.statusCode == 200) {
                 Swal.fire({
                     position: 'center',
@@ -81,7 +81,7 @@ function GetById(Id) {
         async: false,
         //data: { id: id },
         success: function (result) {
-            debugger;
+            //debugger;
             const obj = JSON.parse(result);
             $('#Id').val(obj.Id);
             $('#name').val(obj.Name);
@@ -107,7 +107,7 @@ function Update() {
             timer: 1500
         });
     } else {
-        debugger;
+        //debugger;
         var data = new Object();
         data.Id = $('#Id').val();
         data.Name = $('#name').val();
@@ -146,7 +146,7 @@ function Delete(id) {
         confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.value) {
-            debugger;
+            //debugger;
             $.ajax({
                 url: "/Supp/Delete/",
                 type: "DELETE",

@@ -70,7 +70,7 @@ namespace API.Service
         //    return _todolistRepository.Paging(Id, status, keyword, pageSize, pageNumber);
         //}
 
-        public Task<ToDoListVM> PageSearch(int Id, int status, string keyword, int pageSize, int pageNumber)
+        public Task<ToDoListVM> PageSearch(string Id, int status, string keyword, int pageSize, int pageNumber)
         {
             return _todolistRepository.PageSearch(Id, status, keyword, pageSize, pageNumber);
         }

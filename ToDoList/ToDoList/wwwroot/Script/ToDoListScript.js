@@ -14,7 +14,7 @@ $(document).ready(function () {
         "responsive": true,
         "columnDefs":
             [{
-                "targets": [0, 2, 3],
+                "targets": [0, 5],
                 "orderable": false
             }],
         "columns": [
@@ -116,7 +116,7 @@ function ClearScreen() {
 //    });
 ////}
 function Save() {
-    debugger;
+    //debugger;
     if ($('#name').val() == 0) {
         Swal.fire({
             position: 'center',
@@ -134,7 +134,7 @@ function Save() {
             url: '/User/InsertOrUpdate/',
             data: ToDoList
         }).then((result) => {
-            debugger;
+            //debugger;
             if (result.statusCode == 200) {
                 Swal.fire({
                     position: 'center',
@@ -161,7 +161,7 @@ function GetById(Id) {
         async: false,
         //data: { id: id },
         success: function (result) {
-            debugger;
+            //debugger;
             const obj = JSON.parse(result);
             $('#Id').val(obj.Id);
             $('#name').val(obj.Name);
@@ -224,7 +224,7 @@ function Delete(id) {
         confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.value) {
-            debugger;
+            //debugger;
             $.ajax({
                 url: "/User/Delete/",
                 type: "DELETE",

@@ -54,10 +54,9 @@ namespace ToDoList.Controllers
                     //if (Hashing.ValidatePassword(userVM.Password, userVM.Password)) { 
                     var data = result.Content.ReadAsStringAsync().Result.Replace("\"", "").Split("...");
                     var token = "Bearer " + data[0];
-                    var id = data[1];
-                    HttpContext.Session.SetString("id", id);
+                    var email = data[1];
+                    HttpContext.Session.SetString("id", email);
                     HttpContext.Session.SetString("JWToken", token);
-                    //var Id = HttpContext.Session.GetString("Id");
                     return RedirectToAction(nameof(Index));
                     //}
                 }
@@ -119,29 +118,30 @@ namespace ToDoList.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpGet("user/list/{status}")]
-        public async Task<IActionResult> List(int status)
-        {
-            IEnumerable<Data.Model.ToDoList> todolist = null;
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:44377/api/")
-            };
-            client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
-            //var userid = convert.toint32(httpcontext.session.getstring("id"));
-            var responseTask = await client.GetAsync("ToDoLists/" + HttpContext.Session.GetString("id") + "/" + status);
-            if (responseTask.IsSuccessStatusCode)
-            {
-                var readTask = await responseTask.Content.ReadAsAsync<IList<Data.Model.ToDoList>>();
-                return Ok(new { data = readTask });
-            }
-            else
-            {
-                todolist = Enumerable.Empty<Data.Model.ToDoList>();
-                ModelState.AddModelError(string.Empty, "server error, try after some time");
-            }
-            return Json(todolist);
-        }
+        //[HttpGet("user/list/{status}")]
+        //public async Task<IActionResult> List(int status)
+        //{
+        //    IEnumerable<Data.Model.ToDoList> todolist = null;
+        //    var client = new HttpClient
+        //    {
+        //        BaseAddress = new Uri("https://localhost:44377/api/")
+        //    };
+        //    client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
+        //    //var userid = convert.toint32(httpcontext.session.getstring("id"));
+        //    var responseTask = await client.GetAsync("ToDoLists/" + HttpContext.Session.GetString("id") + "/" + status);
+        //    if (responseTask.IsSuccessStatusCode)
+        //    {
+        //        var readTask = await responseTask.Content.ReadAsAsync<IList<Data.Model.ToDoList>>();
+        //        return Ok(new { data = readTask });
+        //    }
+        //    else
+        //    {
+        //        todolist = Enumerable.Empty<Data.Model.ToDoList>();
+        //        ModelState.AddModelError(string.Empty, "server error, try after some time");
+        //    }
+        //    return Json(todolist);
+        //}
+
         public JsonResult InsertOrUpdate(ToDoListVM toDoListVM)
         {
             var client = new HttpClient
@@ -149,7 +149,7 @@ namespace ToDoList.Controllers
                 BaseAddress = new Uri("https://localhost:44377/api/")
             };
             client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
-            toDoListVM.UserId = Convert.ToInt32(HttpContext.Session.GetString("id"));
+            toDoListVM.UserId = HttpContext.Session.GetString("id");
             var myContent = JsonConvert.SerializeObject(toDoListVM);
             var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
             var byteContent = new ByteArrayContent(buffer);
@@ -246,7 +246,8 @@ namespace ToDoList.Controllers
             try
             {
                 client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
-                var responseTask = await client.GetAsync("ToDoLists/pagesearch?id=" + HttpContext.Session.GetString("id") + "&status=" + status + "&keyword=" + keyword + "&pageSize=" + pageSize + "&pageNumber=" + pageNumber);
+                var getsession = HttpContext.Session.GetString("id");
+                var responseTask = await client.GetAsync("todolists/pagesearch?id=" + getsession + "&status=" + status + "&keyword=" + keyword + "&pageSize=" + pageSize + "&pageNumber=" + pageNumber);
                 if (responseTask.IsSuccessStatusCode)
                 {
                     var readTask = await responseTask.Content.ReadAsAsync<ToDoListVM>();

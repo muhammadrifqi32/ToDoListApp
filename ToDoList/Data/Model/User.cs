@@ -1,40 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Data.Base;
 using Data.ViewModel;
+using Microsoft.AspNetCore.Identity;
 
 namespace Data.Model
 {
-    public class User : BaseModel
+    public class User : IdentityUser
     {
-        public string Email { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-
-        public User() { }
-
-        public User(UserVM userVM)
-        {
-            this.Email = userVM.Email;
-            this.Username = userVM.Username;
-            this.Password = userVM.Password;
-            this.CreateDate = DateTimeOffset.Now;
-            this.isDelete = false;
-        }
-
-        public void Update(UserVM userVM)
-        {
-            this.Email = userVM.Email;
-            this.Username = userVM.Username;
-            this.Password = userVM.Password;
-            this.UpdateDate = DateTimeOffset.Now;
-        }
-
-        public void Delete(UserVM userVM)
-        {
-            this.DeleteDate = DateTimeOffset.Now;
-            this.isDelete = true;
-        }
+        public bool isDelete { get; set; }
+        public DateTimeOffset CreateDate { get; set; }
+        public Nullable<DateTimeOffset> UpdateDate { get; set; }
+        public Nullable<DateTimeOffset> DeleteDate { get; set; }
     }
 }

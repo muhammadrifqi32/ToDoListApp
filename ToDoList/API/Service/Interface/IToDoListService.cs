@@ -18,6 +18,6 @@ namespace API.Service.Interface
         int Uncheckedlist(int Id, ToDoList toDoList);
         //Task<IEnumerable<ToDoListVM>> Search(int Id, int status, string keyword);
         //Task<IEnumerable<ToDoListVM>> Paging(int Id, int status, string keyword, int pageSize, int pageNumber);
-        Task<ToDoListVM> PageSearch(int Id, int status, string keyword, int pageSize, int pageNumber);
+        Task<ToDoListVM> PageSearch(string Id, int status, string keyword, int pageSize, int pageNumber);
     }
 }

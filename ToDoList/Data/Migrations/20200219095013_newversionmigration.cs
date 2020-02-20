@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Data.Migrations
 {
-    public partial class addidentity : Migration
+    public partial class newversionmigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -44,6 +44,58 @@ namespace Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Departments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    isDelete = table.Column<bool>(nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(nullable: false),
+                    UpdateDate = table.Column<DateTimeOffset>(nullable: true),
+                    DeleteDate = table.Column<DateTimeOffset>(nullable: true),
+                    Name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Departments", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Supps",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    isDelete = table.Column<bool>(nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(nullable: false),
+                    UpdateDate = table.Column<DateTimeOffset>(nullable: true),
+                    DeleteDate = table.Column<DateTimeOffset>(nullable: true),
+                    Name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Supps", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    isDelete = table.Column<bool>(nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(nullable: false),
+                    UpdateDate = table.Column<DateTimeOffset>(nullable: true),
+                    DeleteDate = table.Column<DateTimeOffset>(nullable: true),
+                    Email = table.Column<string>(nullable: true),
+                    Username = table.Column<string>(nullable: true),
+                    Password = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -152,6 +204,57 @@ namespace Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Itemms",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    isDelete = table.Column<bool>(nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(nullable: false),
+                    UpdateDate = table.Column<DateTimeOffset>(nullable: true),
+                    DeleteDate = table.Column<DateTimeOffset>(nullable: true),
+                    name = table.Column<string>(nullable: true),
+                    stock = table.Column<int>(nullable: false),
+                    price = table.Column<int>(nullable: false),
+                    SuppId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Itemms", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Itemms_Supps_SuppId",
+                        column: x => x.SuppId,
+                        principalTable: "Supps",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ToDoList",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    isDelete = table.Column<bool>(nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(nullable: false),
+                    UpdateDate = table.Column<DateTimeOffset>(nullable: true),
+                    DeleteDate = table.Column<DateTimeOffset>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    Status = table.Column<int>(nullable: false),
+                    UserId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ToDoList", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ToDoList_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -190,6 +293,16 @@ namespace Data.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Itemms_SuppId",
+                table: "Itemms",
+                column: "SuppId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ToDoList_UserId",
+                table: "ToDoList",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -210,10 +323,25 @@ namespace Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Departments");
+
+            migrationBuilder.DropTable(
+                name: "Itemms");
+
+            migrationBuilder.DropTable(
+                name: "ToDoList");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Supps");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }

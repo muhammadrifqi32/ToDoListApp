@@ -14,5 +14,6 @@ namespace Data.Repository.Interface
         int Create(ItemmVM itemmVM);
         int Update(int Id, ItemmVM itemmVM);
         int Delete(int Id);
+        Task<ItemmVM> PageSearch(string keyword, int pageSize, int pageNumber);
     }
 }

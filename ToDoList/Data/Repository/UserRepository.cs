@@ -98,7 +98,7 @@ namespace Data.Repository
                 var checkuser = connection.Query<User>("exec SP_GetUsernameLogin @Username", new { Username = userVM.Username }).SingleOrDefault();
                 if (checkuser != null)
                 {
-                    if (ValidatePassword(userVM.Password, checkuser.Password))
+                    if (ValidatePassword(userVM.Password, checkuser.PasswordHash))
                     {
                         var procName = "SP_Login"; //callsp
                         parameters.Add("@Username", userVM.Username); //retrieve username

@@ -5,12 +5,14 @@ using System.Threading.Tasks;
 using API.Service.Interface;
 using Data.Model;
 using Data.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
 namespace API.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class ItemmsController : ControllerBase
@@ -68,6 +70,18 @@ namespace API.Controllers
                 return Ok(delete);
             }
             return BadRequest("Delete Failed!");
+        }
+
+        [HttpGet]
+        [Route("PageSearch")]
+        public async Task<ItemmVM> PageSearch(string keyword, int pageSize, int pageNumber)
+        {
+            //keyword = keyword.Substring(3);
+            if (keyword == null)
+            {
+                keyword = "";
+            }
+            return await _itemmService.PageSearch(keyword, pageSize, pageNumber);
         }
     }
 }

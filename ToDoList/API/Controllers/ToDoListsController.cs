@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class ToDoListsController : ControllerBase
@@ -114,7 +114,7 @@ namespace API.Controllers
         
         [HttpGet]
         [Route("PageSearch")]
-        public async Task<ToDoListVM> PageSearch(int id, int status, string keyword, int pageSize, int pageNumber)
+        public async Task<ToDoListVM> PageSearch(string id, int status, string keyword, int pageSize, int pageNumber)
         {
             //keyword = keyword.Substring(3);
             if (keyword == null)

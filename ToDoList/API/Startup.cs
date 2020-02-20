@@ -23,6 +23,8 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Data.Repository.Data;
+using Microsoft.AspNetCore.Identity;
+using Data.Model;
 
 namespace API
 {
@@ -59,6 +61,10 @@ namespace API
             services.AddScoped<IToDoListService, ToDoListService>();
             services.AddScoped<ISuppService, SuppService>();
             services.AddScoped<IItemmService, ItemmService>();
+
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<MyContext>()
+                .AddDefaultTokenProviders();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {

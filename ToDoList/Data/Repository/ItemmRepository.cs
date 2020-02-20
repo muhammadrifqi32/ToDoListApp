@@ -92,5 +92,27 @@ namespace Data.Repository
                 return itemm;
             }
         }
+
+        public async Task<ItemmVM> PageSearch(string keyword, int pageSize, int pageNumber)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value))
+            {
+                var procName = "SP_ItemmPageSearch";
+                parameters.Add("@SearchKey", keyword);
+                parameters.Add("@pageSize", pageSize);
+                parameters.Add("@pageNumber", pageNumber);
+                parameters.Add("@length", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                parameters.Add("@filterlength", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                var result = new ItemmVM();
+
+                result.data = await connection.QueryAsync<ItemmVM>(procName, parameters, commandType: CommandType.StoredProcedure); //await ada jeda. bermanfaat untuk banyak data
+                int filterlength = parameters.Get<int>("@filterlength");
+                result.filterlength = filterlength;
+                int length = parameters.Get<int>("@length");
+                result.length = length;
+                return result;
+            }
+        }
     }
 }

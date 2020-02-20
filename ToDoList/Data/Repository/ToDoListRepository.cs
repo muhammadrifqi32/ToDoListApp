@@ -146,12 +146,12 @@ namespace Data.Repository
         //    }
         //}
 
-        public async Task<ToDoListVM> PageSearch(int Id, int status, string keyword, int pageSize, int pageNumber)
+        public async Task<ToDoListVM> PageSearch(string Id, int status, string keyword, int pageSize, int pageNumber)
         {
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value))
             {
                 var procName = "SP_PageSearch";
-                parameters.Add("@ID", Id);
+                parameters.Add("@email", Id);
                 parameters.Add("@status", status);
                 parameters.Add("@SearchKey", keyword);
                 parameters.Add("@pageSize", pageSize);

@@ -88,7 +88,7 @@ namespace ToDoList.Controllers
             try
             {
                 client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
-                var responseTask = await client.GetAsync("Supps/pagesearch" + "&keyword=" + keyword + "&pageSize=" + pageSize + "&pageNumber=" + pageNumber);
+                var responseTask = await client.GetAsync("Supps/PageSearch?" + "keyword=" + keyword + "&pageSize=" + pageSize + "&pageNumber=" + pageNumber);
                 if (responseTask.IsSuccessStatusCode)
                 {
                     var readTask = await responseTask.Content.ReadAsAsync<SuppVM>();
@@ -103,7 +103,7 @@ namespace ToDoList.Controllers
             return null;
         }
 
-        [HttpGet("supp/pagedata/")]
+        [HttpGet("Supp/PageData/")]
         public IActionResult PageData(IDataTablesRequest request)
         {
             var pageSize = request.Length;

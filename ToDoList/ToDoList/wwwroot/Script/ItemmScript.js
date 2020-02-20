@@ -3,19 +3,19 @@
 $(document).ready(function () {
     //debugger;
     table = $('#myTable').DataTable({
-        //"serverSide": true, // for process server side  
+        "serverSide": true, // for process server side  
         //"processing": true, // for show progress bar  
         //"filter": true, // this is for disable filter (search box)  
         //"orderMulti": false, // for disable multiple column at once 
         "ajax": {
-            //url: "/Supp/PageData/",
-            url: "/Itemm/List/",
+            //url: "/Itemm/List/",
+            url: "/Itemm/PageData/",
             type: "GET"
         },
         "responsive": true,
         "columnDefs":
             [{
-                "targets": [0, 4],
+                "targets": [4],
                 "orderable": false
             }],
         "columns": [
@@ -33,6 +33,7 @@ $(document).ready(function () {
 });
 
 function ClearScreen() {
+    //debugger;
     $('#Id').val('');
     $('#name').val('');
     $('#stock').val('');
@@ -50,7 +51,7 @@ function LoadSupplier(element) {
             type: "Get",
             url: "/Supp/LoadSupplier",
             success: function (data) {
-                debugger;
+                //debugger;
                 Suppliers = data;
                 renderSupplier(element);
             }
@@ -62,10 +63,10 @@ function LoadSupplier(element) {
 }
 
 function renderSupplier(element) {
-    //debugger;
+    debugger;
     var $ele = $(element);
     $ele.empty();
-    $ele.append($('<option/>').val('0').text('Select Supplier'));
+    $ele.append($('<option/>').val('0').text('Select Supplier').hide());
     $.each(Suppliers, function (i, val) {
         debugger;
         $ele.append($('<option/>').val(val.id).text(val.name));
@@ -95,7 +96,7 @@ function Save() {
             url: '/Itemm/InsertOrUpdate/',
             data: Itemm
         }).then((result) => {
-            debugger;
+            //debugger;
             if (result.statusCode == 200) {
                 Swal.fire({
                     position: 'center',
@@ -122,7 +123,7 @@ function GetById(Id) {
         async: false,
         //data: { id: id },
         success: function (result) {
-            debugger;
+            //debugger;
             const obj = JSON.parse(result);
             $('#Id').val(obj.Id);
             $('#name').val(obj.name);
@@ -151,7 +152,7 @@ function Update() {
             timer: 1500
         });
     } else {
-        debugger;
+        //debugger;
         var data = new Object();
         data.Id = $('#Id').val();
         data.Name = $('#name').val();
@@ -193,7 +194,7 @@ function Delete(id) {
         confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.value) {
-            debugger;
+            //debugger;
             $.ajax({
                 url: "/itemm/Delete/",
                 type: "DELETE",
