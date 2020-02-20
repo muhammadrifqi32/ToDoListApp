@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Data.Model;
 using Data.ViewModel;
@@ -11,6 +12,7 @@ using DataTables.AspNet.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using OfficeOpenXml;
 
 namespace ToDoList.Controllers
 {
@@ -33,7 +35,7 @@ namespace ToDoList.Controllers
             {
                 return View(List());
             }
-            return RedirectToAction("Login","User");
+            return RedirectToAction("Login", "User");
         }
         public async Task<IActionResult> List()
         {
@@ -165,6 +167,84 @@ namespace ToDoList.Controllers
             client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
             var result = client.DeleteAsync("supps/" + id).Result;
             return Json(result);
+        }
+
+        public async Task<IActionResult> exporttoExcel()
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:44377/api/")
+            };
+            client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
+            var columnHeaders = new String[]
+            {
+                "ID",
+                "Supplier Name"
+            };
+
+            byte[] result;
+
+            using (var package = new ExcelPackage())
+            {
+                var worksheet = package.Workbook.Worksheets.Add("List Supplier");
+                using (var cells = worksheet.Cells[1, 1, 1, 2])
+                {
+                    cells.Style.Font.Bold = true;
+                }
+
+                for (var i = 0; i < columnHeaders.Count(); i++)
+                {
+                    worksheet.Cells[1, i + 1].Value = columnHeaders[i];
+                }
+
+                var j = 2;
+                HttpResponseMessage response = await client.GetAsync("supps");
+                if (response.IsSuccessStatusCode)
+                {
+                    var readTask = await response.Content.ReadAsAsync<IList<Supp>>();
+                    foreach (var supplier in readTask)
+                    {
+                        worksheet.Cells["A" + j].Value = supplier.Id;
+                        worksheet.Cells["B" + j].Value = supplier.Name;
+                        j++;
+                    }
+                }
+                result = package.GetAsByteArray();
+            }
+            return File(result, "application/ms-excel", $"Employee.xlsx");
+        }
+
+        public async Task<IActionResult> exporttoCSV()
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:44377/api/")
+            };
+            client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
+            var columnHeaders = new String[]
+            {
+                "ID",
+                "Supplier Name"
+            };
+            byte[] buffer;
+            var suppcsv = new StringBuilder();
+            HttpResponseMessage response = await client.GetAsync("supps");
+            if (response.IsSuccessStatusCode)
+            {
+                var readTask = await response.Content.ReadAsAsync<IList<Supp>>();
+                var supp = (from supplier in readTask
+                            select new object[]
+                            {
+                                            supplier.Id,
+                                            $"\"{supplier.Name}\""
+                            }).ToList();
+                supp.ForEach(line =>
+                {
+                    suppcsv.AppendLine(string.Join(",", line));
+                });
+            }
+            buffer = Encoding.ASCII.GetBytes($"{string.Join(",", columnHeaders)}\r\n{suppcsv.ToString()}");
+            return File(buffer, "text/csv", $"Employee.csv");
         }
     }
 }
