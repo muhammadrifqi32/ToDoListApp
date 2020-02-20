@@ -211,7 +211,7 @@ namespace ToDoList.Controllers
                 }
                 result = package.GetAsByteArray();
             }
-            return File(result, "application/ms-excel", $"Employee.xlsx");
+            return File(result, "application/ms-excel", $"Supplier{DateTime.Now.ToString("hh:mm:ss MM/dd/yyyy")}.xlsx");
         }
 
         public async Task<IActionResult> exporttoCSV()
@@ -244,7 +244,7 @@ namespace ToDoList.Controllers
                 });
             }
             buffer = Encoding.ASCII.GetBytes($"{string.Join(",", columnHeaders)}\r\n{suppcsv.ToString()}");
-            return File(buffer, "text/csv", $"Employee.csv");
+            return File(buffer, "text/csv", $"Supplier{DateTime.Now.ToString("hh:mm:ss MM/dd/yyyy")}.csv");
         }
     }
 }
