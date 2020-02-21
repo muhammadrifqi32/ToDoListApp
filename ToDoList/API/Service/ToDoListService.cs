@@ -38,7 +38,7 @@ namespace API.Service
             //throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<ToDoListVM>> Get(int Id, int status)
+        public Task<IEnumerable<ToDoListVM>> Get(string Id, int status)
         {
             return _todolistRepository.Get(Id, status);
             //throw new NotImplementedException();

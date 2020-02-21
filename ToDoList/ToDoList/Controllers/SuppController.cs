@@ -27,9 +27,8 @@ namespace ToDoList.Controllers
         }
 
         // GET: Supp
-        public ActionResult Index()
+        public IActionResult Index()
         {
-            //return View(List());
             var Id = HttpContext.Session.GetString("id");
             if (Id != null)
             {
@@ -246,5 +245,12 @@ namespace ToDoList.Controllers
             buffer = Encoding.ASCII.GetBytes($"{string.Join(",", columnHeaders)}\r\n{suppcsv.ToString()}");
             return File(buffer, "text/csv", $"Supplier{DateTime.Now.ToString("hh:mm:ss MM/dd/yyyy")}.csv");
         }
+
+        //public ActionResult Report(Supp supp)
+        //{
+        //    SuppList suppList = new SuppList();
+        //    byte[] abytes = suppList.PrepareReport();
+        //    return File(abytes, "application/pdf");
+        //}
     }
 }

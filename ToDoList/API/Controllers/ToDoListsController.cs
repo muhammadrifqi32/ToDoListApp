@@ -32,7 +32,7 @@ namespace API.Controllers
 
         // GET: api/ToDoLists/5
         [HttpGet("{Id}/{status}")]
-        public Task<IEnumerable<ToDoListVM>> Get(int id, int status)
+        public Task<IEnumerable<ToDoListVM>> Get(string id, int status)
         {
             return _todolistService.Get(id, status);
         }

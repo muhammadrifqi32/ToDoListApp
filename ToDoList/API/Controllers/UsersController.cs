@@ -95,6 +95,13 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("Logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok("Log Out Success");
+        }
+
         [HttpPost("Register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register(UserVM userVM)

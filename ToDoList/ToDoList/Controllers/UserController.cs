@@ -68,6 +68,21 @@ namespace ToDoList.Controllers
             }
         }
 
+        public IActionResult LogOut()
+        {
+            client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
+
+            var result = client.GetAsync("Users/Logout").Result;
+            if (result.IsSuccessStatusCode)
+            {
+                HttpContext.Session.Remove("id");
+                HttpContext.Session.Remove("token");
+                return RedirectToAction(nameof(Index));
+            }
+            return View();
+
+        }
+
         [HttpGet]
         public ActionResult Register()
         {
@@ -112,11 +127,11 @@ namespace ToDoList.Controllers
             }
         }
 
-        public ActionResult Logout()
-        {
-            HttpContext.Session.Remove("id");
-            return RedirectToAction(nameof(Index));
-        }
+        //public ActionResult Logout()
+        //{
+        //    HttpContext.Session.Remove("id");
+        //    return RedirectToAction(nameof(Index));
+        //}
 
         //[HttpGet("user/list/{status}")]
         //public async Task<IActionResult> List(int status)
@@ -191,19 +206,41 @@ namespace ToDoList.Controllers
             var result = client.DeleteAsync("todolists/" + id).Result;
             return Json(result);
         }
-        public JsonResult CheckedTodoList(int Id, Data.Model.ToDoList toDoList)
+        public JsonResult CheckedTodoList(int Id, ToDoListVM toDoListVM)
         {
             var client = new HttpClient
             {
                 BaseAddress = new Uri("https://localhost:44377/api/")
             };
             client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
-            var myContent = JsonConvert.SerializeObject(toDoList);
+            var getEmail = HttpContext.Session.GetString("id");
+            var myContent = JsonConvert.SerializeObject(toDoListVM);
             var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
             var byteContent = new ByteArrayContent(buffer);
             byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             var result = client.PutAsync("todolists/Checkedlist/" + Id, byteContent).Result;
-            return Json(result);
+            if (result.IsSuccessStatusCode)
+            {
+                //MailMessage mm = new MailMessage("muhammadrifqi0@gmail.com", userVM.Email);
+                //mm.Subject = "[Password] " + DateTime.Now.ToString("ddMMyyyyhhmmss");
+                //mm.Body = "Hi " + userVM.Username + "\nThis Is Your New Password : " + userVM.Password;
+
+                //SmtpClient smtp = new SmtpClient();
+                //smtp.Host = "smtp.gmail.com";
+                //smtp.Port = 587;
+                //smtp.EnableSsl = true;
+
+                //NetworkCredential nc = new NetworkCredential("muhammadrifqi0@gmail.com", "085376886737");
+                //smtp.UseDefaultCredentials = false;
+                //smtp.Credentials = nc;
+                //smtp.Send(mm);
+                //ViewBag.Message = "Password Has Been Sent.Check your email to login";
+                return Json(result);
+            }
+            else
+            {
+                return Json("");
+            }
         }
         public JsonResult UncheckedTodoList(int Id, Data.Model.ToDoList toDoList)
         {
@@ -241,7 +278,7 @@ namespace ToDoList.Controllers
         //    return null;
         //}
 
-        public async Task<ToDoListVM> Paging(int pageSize, int pageNumber,string keyword, int status)
+        public async Task<ToDoListVM> Paging(int pageSize, int pageNumber, string keyword, int status)
         {
             try
             {

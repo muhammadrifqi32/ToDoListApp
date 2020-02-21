@@ -62,7 +62,7 @@ namespace Data.Repository
             //throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<ToDoListVM>> Get(int Id, int status)
+        public async Task<IEnumerable<ToDoListVM>> Get(string Id, int status)
         {
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value))
             {

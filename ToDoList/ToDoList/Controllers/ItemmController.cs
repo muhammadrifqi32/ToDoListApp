@@ -24,7 +24,7 @@ namespace ToDoList.Controllers
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public ActionResult Index()
+        public IActionResult Index()
         {
             var Id = HttpContext.Session.GetString("id");
             if (Id != null)
