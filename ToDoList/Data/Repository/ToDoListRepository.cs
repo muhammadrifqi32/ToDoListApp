@@ -169,5 +169,16 @@ namespace Data.Repository
                 return result;
             }
         }
+
+        public IEnumerable<ToDoListVM> GetStatus(string UserId)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value))
+            {
+                var procName = "SP_GetStatus"; //
+                parameters.Add("@ID", UserId);
+                var todolist = connection.Query<ToDoListVM>(procName, parameters, commandType: CommandType.StoredProcedure);
+                return todolist;
+            }
+        }
     }
 }

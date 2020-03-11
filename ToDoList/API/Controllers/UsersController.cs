@@ -84,7 +84,7 @@ namespace API.Controllers
                             );
                         var idtoken = new JwtSecurityTokenHandler().WriteToken(token);
                         claims.Add(new Claim("TokenSecurity", idtoken.ToString()));
-                        return Ok(idtoken + "..." + user.Email);
+                        return Ok(idtoken + "..." + user.Email + "..." + user.Id);
                     }
                 }
                 return BadRequest(new { message = "Username or Password is Invalid" });

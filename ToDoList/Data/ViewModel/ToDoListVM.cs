@@ -16,5 +16,6 @@ namespace Data.ViewModel
         public DateTimeOffset UpdateDate { get; set; }
         public int length { get; set; }
         public int filterlength { get; set; }
+        public int Total { get; set; }
     }
 }

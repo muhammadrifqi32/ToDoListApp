@@ -11,6 +11,7 @@ namespace API.Service.Interface
     {
         Task<IEnumerable<ToDoListVM>> Get();
         Task<IEnumerable<ToDoListVM>> Get(string Id, int status);
+        IEnumerable<ToDoListVM> GetStatus(string UserId);
         int Create(ToDoListVM toDoListVM);
         int Update(int Id, ToDoListVM toDoListVM);
         int Delete(int Id);

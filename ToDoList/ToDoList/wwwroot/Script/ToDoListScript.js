@@ -2,6 +2,7 @@
 
 $(document).ready(function () {
     //debugger;
+    Bar();
     table = $('#myTable').DataTable({
         "serverSide": true, // for process server side  
         //"processing": true, // for show progress bar  
@@ -60,10 +61,10 @@ $(document).ready(function () {
             {
                 "render": function (data, type, row) {
                     if (row.status == 1) {
-                        return '<button disabled class="btn btn-danger" data-placement="right" data-toggle="tooltip" data-animation="false" title="Delete" onclick="return Delete(' + row.id + ')"> <i class="mdi mdi-eraser"></i></button >'
+                        return '<button disabled class="btn btn-warning" data-placement="left" data-toggle="tooltip" data-animation="false" title="Update" onclick="return GetById(' + row.id + ')"> <i class="mdi mdi-pencil"></i></button > | <button disabled class="btn btn-danger" data-placement="right" data-toggle="tooltip" data-animation="false" title="Delete" onclick="return Delete(' + row.id + ')"> <i class="mdi mdi-eraser"></i></button >'
                     }
                     else {
-                        return '<button class="btn btn-danger" data-placement="right" data-toggle="tooltip" data-animation="false" title="Delete" onclick="return Delete(' + row.id + ')"> <i class="mdi mdi-eraser"></i></button >'
+                        return '<button class="btn btn-warning" data-placement="left" data-toggle="tooltip" data-animation="false" title="Update" onclick="return GetById(' + row.id + ')"> <i class="mdi mdi-pencil"></i></button > | <button class="btn btn-danger" data-placement="right" data-toggle="tooltip" data-animation="false" title="Delete" onclick="return Delete(' + row.id + ')"> <i class="mdi mdi-eraser"></i></button >'
                     }
                 }
             }]
@@ -115,6 +116,41 @@ function ClearScreen() {
 //        }
 //    });
 ////}
+
+
+function Bar() {
+    //debugger;
+    $.ajax({
+        type: 'GET',
+        url: '/User/GetStatus/',
+        success: function (data) {
+            //debugger;
+            Morris.Bar({
+                element: 'morris-bar-chart',
+                data: $.each(JSON.parse(data), function (index, val) {
+                    if (val.Status == 0) {
+                        val.Status = "On Progress";
+                    }
+                    else {
+                        val.Status = "Done";
+                    }
+                    [{
+                        Status: val.Status,
+                        Total: val.Total
+                    }]
+                }),
+                xkey: 'Status',
+                ykeys: ['Total'],
+                labels: ['ToDoList Progress'],
+                barColors: ['#55ce63', '#2f3d4a', '#009efb'],
+                hideHover: 'auto',
+                gridLineColor: '#eef0f2',
+                resize: true
+            });
+        }
+    })
+};
+
 function Save() {
     //debugger;
     if ($('#name').val() == 0) {
@@ -196,7 +232,7 @@ function Update() {
         }).then((result) => {
             //debugger;
             $('#myModal').hide();
-            if (resultr) {
+            if (result.statusCode == 200) {
                 Swal.fire({
                     position: 'center',
                     type: 'success',

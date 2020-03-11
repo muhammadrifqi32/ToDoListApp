@@ -55,8 +55,10 @@ namespace ToDoList.Controllers
                     var data = result.Content.ReadAsStringAsync().Result.Replace("\"", "").Split("...");
                     var token = "Bearer " + data[0];
                     var email = data[1];
+                    var userid = data[2];
                     HttpContext.Session.SetString("id", email);
                     HttpContext.Session.SetString("JWToken", token);
+                    HttpContext.Session.SetString("userid", userid);
                     return RedirectToAction(nameof(Index));
                     //}
                 }
@@ -77,6 +79,7 @@ namespace ToDoList.Controllers
             {
                 HttpContext.Session.Remove("id");
                 HttpContext.Session.Remove("token");
+                HttpContext.Session.Remove("userid");
                 return RedirectToAction(nameof(Index));
             }
             return View();
@@ -94,10 +97,6 @@ namespace ToDoList.Controllers
         public ActionResult Register(UserVM userVM)
         {
             userVM.Password = Hashing.HashPassword(userVM.Password);
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:44377/api/")
-            };
             var myContent = JsonConvert.SerializeObject(userVM);
             var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
             var byteContent = new ByteArrayContent(buffer);
@@ -159,12 +158,8 @@ namespace ToDoList.Controllers
 
         public JsonResult InsertOrUpdate(ToDoListVM toDoListVM)
         {
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:44377/api/")
-            };
             client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
-            toDoListVM.UserId = HttpContext.Session.GetString("id");
+            toDoListVM.UserId = HttpContext.Session.GetString("userid");
             var myContent = JsonConvert.SerializeObject(toDoListVM);
             var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
             var byteContent = new ByteArrayContent(buffer);
@@ -198,20 +193,12 @@ namespace ToDoList.Controllers
         }
         public JsonResult Delete(int id)
         {
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:44377/api/")
-            };
             client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
             var result = client.DeleteAsync("todolists/" + id).Result;
             return Json(result);
         }
         public JsonResult CheckedTodoList(int Id, ToDoListVM toDoListVM)
         {
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:44377/api/")
-            };
             client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
             var getEmail = HttpContext.Session.GetString("id");
             var myContent = JsonConvert.SerializeObject(toDoListVM);
@@ -244,10 +231,6 @@ namespace ToDoList.Controllers
         }
         public JsonResult UncheckedTodoList(int Id, Data.Model.ToDoList toDoList)
         {
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:44377/api/")
-            };
             client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
             var myContent = JsonConvert.SerializeObject(toDoList);
             var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
@@ -311,5 +294,36 @@ namespace ToDoList.Controllers
             var response = DataTablesResponse.Create(request, dataPage.length, dataPage.filterlength, dataPage.data);
             return new DataTablesJsonResult(response, true);
         }
+
+        [HttpGet]
+        public JsonResult GetStatus()
+        {
+            IEnumerable<ToDoListVM> toDoLists = null;
+            client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
+            var iduser = HttpContext.Session.GetString("userid");
+            var response = client.GetAsync("todolists/getstatus/" + iduser);
+            response.Wait();
+            var result = response.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var data = result.Content.ReadAsAsync<IList<ToDoListVM>>();
+                data.Wait();
+                toDoLists = data.Result;
+                var json = JsonConvert.SerializeObject(toDoLists.ToList(), Formatting.Indented);
+                return Json(json);
+            }
+            return Json("internal server error");
+        }
+
+        public IActionResult Home()
+        {
+            var Id = HttpContext.Session.GetString("id");
+            if (Id != null)
+            {
+                return View();
+            }
+            return RedirectToAction(nameof(Login));
+        }
+
     }
 }

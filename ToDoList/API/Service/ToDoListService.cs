@@ -74,5 +74,10 @@ namespace API.Service
         {
             return _todolistRepository.PageSearch(Id, status, keyword, pageSize, pageNumber);
         }
+
+        public IEnumerable<ToDoListVM> GetStatus(string UserId)
+        {
+            return _todolistRepository.GetStatus(UserId);
+        }
     }
 }
