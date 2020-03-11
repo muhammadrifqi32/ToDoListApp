@@ -117,7 +117,9 @@ function ClearScreen() {
 //    });
 ////}
 
+//Morris Bar
 
+//First Version
 function Bar() {
     //debugger;
     $.ajax({
@@ -150,6 +152,40 @@ function Bar() {
         }
     })
 };
+//First Version
+
+
+//Second Version
+//function Bar() {
+//    //debugger;
+//    $.ajax({
+//        type: 'GET',
+//        url: '/User/GetStatus/',
+//    }).then((result) => {
+//        if (result != "internal server error") {
+//            $("#morris-bar-chart").show();
+//            $("#morris-no-data-found").hide();
+//            chart.setData(JSON.parse(result));
+//        }
+//        else {
+//            $("#morris-bar-chart").hide();
+//            $("#morris-no-data-found").show();
+//            document.getElementById("morris-no-data-found").innerHTML = "internal server error";
+//        }
+//    });
+//}
+//var chart = Morris.Bar({
+//    element: 'morris-bar-chart',
+//    data: [0, 0],
+//    xkey: 'Status',
+//    ykeys: ['Total'],
+//    labels: ['ToDoList Progress'],
+//    barColors: ['#55ce63', '#2f3d4a', '#009efb'],
+//    resize: true
+//});
+//Second Version
+
+//Morris Bar
 
 function Save() {
     //debugger;
