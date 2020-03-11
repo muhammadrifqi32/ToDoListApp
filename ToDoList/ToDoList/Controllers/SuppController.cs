@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using ToDoList.Report;
 
 namespace ToDoList.Controllers
 {
@@ -246,11 +247,21 @@ namespace ToDoList.Controllers
             return File(buffer, "text/csv", $"Supplier{DateTime.Now.ToString("hh:mm:ss MM/dd/yyyy")}.csv");
         }
 
-        //public ActionResult Report(Supp supp)
-        //{
-        //    SuppList suppList = new SuppList();
-        //    byte[] abytes = suppList.PrepareReport();
-        //    return File(abytes, "application/pdf");
-        //}
+        public async Task<IActionResult> Report(SuppVM suppVM)
+        {
+            SuppList supps = new SuppList();
+            var readTask = await GetSupps();
+            byte[] abytes = supps.PrepareReport(readTask);
+            return File(abytes, "application/pdf", $"Supplier List{DateTime.Now.ToString("hh:mm:ss MM/dd/yyyy")}.pdf");
+        }
+
+        public async Task<List<SuppVM>> GetSupps()
+        {
+            List<SuppVM> supps = new List<SuppVM>();
+            client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken")); 
+            var responseTask = await client.GetAsync("supps");
+            supps = await responseTask.Content.ReadAsAsync<List<SuppVM>>();
+            return supps;
+        }
     }
 }
