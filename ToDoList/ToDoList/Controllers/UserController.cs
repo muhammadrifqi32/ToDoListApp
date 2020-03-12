@@ -315,6 +315,34 @@ namespace ToDoList.Controllers
             return Json("internal server error");
         }
 
+        [HttpGet]
+        public JsonResult GetStatusDonut()
+        {
+            IEnumerable<ToDoListVM> toDoLists = null;
+            client.DefaultRequestHeaders.Add("Authorization", HttpContext.Session.GetString("JWToken"));
+            var iduser = HttpContext.Session.GetString("userid");
+            var response = client.GetAsync("todolists/getstatus/" + iduser);
+            response.Wait();
+            var result = response.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var data = result.Content.ReadAsAsync<IList<ToDoListVM>>();
+                data.Wait();
+                toDoLists = data.Result;
+                List<Models.Report>  chart = new List<Models.Report>();
+                foreach(var c in toDoLists)
+                {
+                    Models.Report report = new Models.Report();
+                    report.label = c.Status.ToString();
+                    report.value = c.Total.ToString();
+                    chart.Add(report);
+                }
+                var json = JsonConvert.SerializeObject(chart, Formatting.Indented);
+                return Json(json);
+            }
+            return Json("internal server error");
+        }
+
         public IActionResult Home()
         {
             var Id = HttpContext.Session.GetString("id");

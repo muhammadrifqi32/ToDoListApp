@@ -3,6 +3,8 @@
 $(document).ready(function () {
     //debugger;
     Bar();
+    Donut();
+    //Area();
     table = $('#myTable').DataTable({
         "serverSide": true, // for process server side  
         //"processing": true, // for show progress bar  
@@ -126,7 +128,7 @@ function Bar() {
         type: 'GET',
         url: '/User/GetStatus/',
         success: function (data) {
-            //debugger;
+            debugger;
             Morris.Bar({
                 element: 'morris-bar-chart',
                 data: $.each(JSON.parse(data), function (index, val) {
@@ -152,6 +154,71 @@ function Bar() {
         }
     })
 };
+
+function Donut() {
+    //debugger;
+    $.ajax({
+        type: 'GET',
+        url: '/User/GetStatusDonut/',
+        success: function (data) {
+            //debugger;
+            Morris.Donut({
+                element: 'morris-donut-chart',
+                data: $.each(JSON.parse(data), function (index, val) {
+                    if (val.label == 0) {
+                        val.label = "On Progress";
+                    }
+                    else {
+                        val.label = "Done";
+                    }
+                    [{
+                        label: val.label,
+                        value: val.value
+                    }]
+                }),
+                resize: true,
+                colors: ['#009efb', '#55ce63', '#2f3d4a']
+            });
+        }
+    })
+};
+
+//function Area() {
+//    //debugger;
+//    $.ajax({
+//        type: 'GET',
+//        url: '/User/GetStatus/',
+//        success: function (data) {
+//            //debugger;
+//            Morris.Area({
+//                element: 'morris-area-chart',
+//                data: $.each(JSON.parse(data), function (index, val) {
+//                    if (val.Status == 0) {
+//                        val.Status = "On Progress";
+//                    }
+//                    else {
+//                        val.Status = "Done";
+//                    }
+//                    [{
+//                        Status: val.Status,
+//                        Total: val.Total
+//                    }]
+//                }),
+//                lineColors: ['#55ce63', '#2f3d4a', '#009efb'],
+//                xkey: 'Status',
+//                ykeys: ['Total'],
+//                labels: ['ToDoList Progress'],
+//                pointSize: 0,
+//                lineWidth: 0,
+//                resize: true,
+//                fillOpacity: 0.8,
+//                behaveLikeLine: true,
+//                gridLineColor: '#e0e0e0',
+//                hideHover: 'auto'
+//            });
+//        }
+//    })
+//};
 //First Version
 
 
