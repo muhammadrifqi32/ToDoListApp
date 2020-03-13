@@ -101,7 +101,7 @@ namespace ToDoList.Controllers
             var buffer = System.Text.Encoding.UTF8.GetBytes(myContent);
             var byteContent = new ByteArrayContent(buffer);
             byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            var result = client.PostAsync("users", byteContent).Result;
+            var result = client.PostAsync("Users/register", byteContent).Result;
             if (result.IsSuccessStatusCode)
             {
                 //MailMessage mm = new MailMessage("muhammadrifqi0@gmail.com", userVM.Email);
